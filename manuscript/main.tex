@@ -158,30 +158,45 @@ None of the three reports results outside of a handful of already-mature metro s
 
 \section{Problem Formulation}\label{sec:problem}
 
-%% TODO: formalize MNEP following su2024/zhang2024 notation --
-%% state S_t = (rail network M_t, remaining budget b_t), action A_t = next rail
-%% node/station (metro or tram/light-rail extension), reward vector
-%% r_t = (demand, equity, accessibility), Tchebycheff scalarization, feasibility action
-%% mask (station spacing/angle/budget constraints). Bus-derived features enter the STATE
-%% only (candidate-region definition, demand proxy per Section~\ref{sec:data}), never the
-%% action space.
+Following \citet{su2024} and \citet{zhang2024}, we formulate rail network expansion as a finite-horizon Markov Decision Process (MDP) over a set of candidate regions $\mathcal{N} = \{n_1, \dots, n_k\}$ (Section~\ref{sec:data}). A rail network is a graph $M = (V, E)$ with $V \subseteq \mathcal{N}$ the selected stations and $E$ the line segments connecting them.
+
+\textbf{State.} $S_t = (M_t, b_t)$, the partial rail network built so far and the remaining construction budget. Bus-derived features (candidate-region richness, demand-proxy signal; Section~\ref{sec:data}) are encoded as node/edge attributes within $M_t$'s graph representation, not as a separate part of the state that could itself be modified by an action.
+
+\textbf{Action.} $A_t \in \mathcal{N} \setminus V_t$: the agent selects one unselected candidate node to add, either extending an existing line or starting a new one. The action space is restricted to a feasibility mask $\mathcal{A}(S_t) \subseteq \mathcal{N} \setminus V_t$ enforcing station-spacing and turn-angle constraints and remaining budget, as in \citet{su2024}. $\mathcal{A}(S_t)$ never contains a bus-route action -- only rail (metro/tram/light-rail) extensions are ever selectable, per the scope decision in Section~\ref{sec1}.
+
+\textbf{Transition.} Deterministic: $M_{t+1} = M_t \cup \{A_t\}$, with the new station connected to the nearest node on the same line (or starting a new line if none exists within a feasibility-preserving distance). $b_{t+1} = b_t - \text{cost}(A_t)$. An episode terminates when $b_t$ is exhausted or $\mathcal{A}(S_t) = \emptyset$.
+
+\textbf{Reward.} A vector of marginal objective gains $\mathbf{r}_t = (r_t^{\text{demand}}, r_t^{\text{equity}}, r_t^{\text{access}})$, each defined as the change in a network-level objective caused by adding $A_t$:
+\begin{equation}
+r_t^{(j)} = C^{(j)}(M_{t+1}) - C^{(j)}(M_t), \quad j \in \{\text{demand}, \text{equity}, \text{access}\},\label{eq:marginal-reward}
+\end{equation}
+where $C^{\text{demand}}(M)$ follows \citeauthor{su2024}'s OD-demand-satisfaction formulation (weighting each OD pair's flow by how directly $M$ connects it), $C^{\text{equity}}(M)$ is a Gini/Theil index over per-region accessibility (lower inequality $\Rightarrow$ higher $C^{\text{equity}}$), and $C^{\text{access}}(M)$ is the radiation-model accessibility measure used by \citet{zhang2024}; all three are computed from the same underlying GNN-encoded region graph (Section~\ref{sec:method}) so they can share intermediate representations.
+
+\textbf{Scalarization and objective.} Following \citet{zhang2024}, at the start of each training episode a weight vector $\mathbf{w}$ is sampled uniformly from the probability simplex (Algorithm~\ref{alg:curriculum}, line 5) and the vector reward is reduced via augmented Tchebycheff decomposition,
+\begin{equation}
+g(\mathbf{r}_t \mid \mathbf{w}, \mathbf{z}^*) = \max_j \left[ w_j \left| r_t^{(j)} - z^*_j \right| \right] + \varepsilon \sum_j w_j \left| r_t^{(j)} - z^*_j \right|,\label{eq:tchebycheff}
+\end{equation}
+with ideal point $\mathbf{z}^* = (1,1,1)$ (all objectives normalized to $[0,1]$) and small $\varepsilon > 0$ to exclude weakly-Pareto-optimal solutions, matching the implementation in \texttt{src/rl/reward.py}. The policy $\pi_\theta$ is trained to maximize the expected discounted sum of scalarized rewards, $\mathbb{E}_{\mathbf{w}}\left[\sum_t -g(\mathbf{r}_t \mid \mathbf{w}, \mathbf{z}^*)\right]$, over the sampled weight distribution, so a single trained policy supports the full range of demand/equity/accessibility trade-offs rather than one fixed weighting.
 
 \section{Method}\label{sec:method}
 
-\subsection{GNN state encoder}
+\subsection{GNN state encoder}\label{sec:method-gnn}
 
-%% TODO: describe heterogeneous multi-graph encoder over the existing rail network
-%% (spatial-contiguity + OD-flow edges), following su2024 Sec. 3.1-3.2, adapted to the
-%% case-study cities. Bus-derived demand/candidate-region features (Section~\ref{sec:data})
-%% are incorporated as node/edge features on the rail graph, not as separate bus nodes/edges
-%% subject to expansion actions.
+We encode $M_t$ with a two-relation heterogeneous graph neural network, following \citeauthor{su2024}'s scheme (\citeyear{su2024}, Sec.~3.1--3.2), implemented in \texttt{src/gnn/encoder.py}. Each candidate region $n_i$ has a raw feature vector $\mathbf{a}_i$ (population density, income/employment where available, bus-derived candidate-region and demand-proxy signal from Section~\ref{sec:data}, and existing-rail proximity), projected to an initial hidden state $\mathbf{h}_i^{(0)} = \mathbf{W}_A \mathbf{a}_i$. Two edge types connect candidate regions: spatial-contiguity edges $e^s_{ij}$ (shared boundary, Section~\ref{sec:data}'s queen-contiguity construction) and OD-flow edges $e^o_{ij}$ (disaggregated travel demand). At each layer $l$, messages are aggregated separately per relation and combined with a residual connection:
+\begin{align}
+\mathbf{h}_{s,i}^{(l)} &= \sum_{j} e^s_{ij} \, \mathbf{W}_s^{(l)} \mathbf{h}_j^{(l)}, \qquad
+\mathbf{h}_{o,i}^{(l)} = \sum_{j} e^o_{ij} \, \mathbf{W}_o^{(l)} \mathbf{h}_j^{(l)}, \label{eq:gnn-relations}\\
+\mathbf{h}_i^{(l+1)} &= \tanh\!\left( \mathbf{W}_c^{(l)} \left[\mathbf{h}_{s,i}^{(l)} \,\|\, \mathbf{h}_{o,i}^{(l)}\right] + \mathbf{h}_i^{(l)} \right), \label{eq:gnn-combine}
+\end{align}
+where $\|$ denotes concatenation. Stacking $L$ such layers yields final node embeddings $\mathbf{h}_i^{(L)}$ that jointly encode a region's rail/OD structure and its bus-informed auxiliary features -- the bus signal enters only as an entry of $\mathbf{a}_i$, never as its own node or edge type, so it cannot be selected as an action regardless of how the graph is encoded.
 
-\subsection{Multi-objective policy}
+\subsection{Multi-objective policy}\label{sec:method-policy}
 
-%% TODO: describe attentive actor-critic policy/value network over the embedded graph,
-%% masked action selection over rail-extension actions only, and Tchebycheff-decomposed
-%% reward over (demand satisfaction, social equity, radiation accessibility), following
-%% zhang2024 Sec. 3.2.
+The actor-critic policy (\texttt{src/rl/policy.py}) operates on the embedded graph $\{\mathbf{h}_i^{(L)}\}$. A query vector $\mathbf{q}_t$ represents the current partial network, computed by mean-pooling the embeddings of already-selected nodes $V_t$ (or all candidate nodes if $V_t = \emptyset$, at the start of an episode). Each candidate node is scored by scaled dot-product attention against $\mathbf{q}_t$,
+\begin{equation}
+\text{score}(n_i) = \frac{(\mathbf{W}_k \mathbf{h}_i^{(L)}) \cdot (\mathbf{W}_q \mathbf{q}_t)}{\sqrt{d}}, \label{eq:policy-score}
+\end{equation}
+with $d$ the embedding dimension, and infeasible actions ($n_i \notin \mathcal{A}(S_t)$) masked to $-\infty$ before a softmax yields the action distribution $\pi_\theta(A_t \mid S_t)$. A separate value head, a two-layer MLP over $\mathbf{q}_t$, estimates $V_\phi(S_t)$ for the actor-critic baseline. Both heads are trained jointly on the Tchebycheff-scalarized reward (Eq.~\ref{eq:tchebycheff}) via a standard advantage actor-critic update, with the sampled weight vector $\mathbf{w}$ (Section~\ref{sec:problem}) held fixed for the duration of each episode.
 
 \subsection{Cross-city curriculum and sample efficiency}
 
