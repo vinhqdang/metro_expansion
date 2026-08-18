@@ -7,6 +7,7 @@ from shapely.geometry import box
 
 from src.data.hcmc import (
     _min_max_normalize,
+    _normalize_district_name,
     build_bus_stop_density_feature,
     build_contiguity_edges,
     build_node_features,
@@ -137,3 +138,42 @@ def test_build_od_edges_handles_empty_od():
     od = pd.DataFrame({"Start": [], "End": [], "Quantity_M": []})
     edge_index, edge_weight = build_od_edges(zones, od)
     assert edge_index.shape == (2, 0)
+
+
+def test_normalize_district_name_strips_spaces_and_case():
+    assert _normalize_district_name("Binh Tan") == _normalize_district_name("BinhTan")
+    assert _normalize_district_name("Binh Tan") == "binhtan"
+
+
+def test_build_od_edges_matches_district_names_despite_spacing_difference():
+    # Regression test: CSL_HCMC's real survey data uses "BinhTan" (no space)
+    # while the zones dataset uses "Binh Tan" (with space) for the same
+    # district -- exact-string matching alone silently drops these rows.
+    zones = make_toy_zones()
+    zones.loc[0, "Dist_Name"] = "Binh Tan"
+    od = pd.DataFrame({"Start": ["BinhTan"], "End": ["B"], "Quantity_M": [40.0]})
+
+    edge_index, edge_weight = build_od_edges(zones, od)
+
+    assert edge_index.shape[1] > 0  # previously this silently produced zero edges
+    src_zones = set(edge_index[0].tolist())
+    assert 0 in src_zones  # zone 0 ("Binh Tan") is correctly matched as an origin
+
+
+def test_build_od_edges_logs_warning_for_unmatched_rows_but_keeps_matched_ones(caplog):
+    zones = make_toy_zones()
+    od = pd.DataFrame(
+        {
+            "Start": ["A", "NoSuchDistrict"],
+            "End": ["B", "A"],
+            "Quantity_M": [100.0, 999.0],
+        }
+    )
+
+    with caplog.at_level("WARNING"):
+        edge_index, edge_weight = build_od_edges(zones, od)
+
+    # the valid A->B row still produces edges...
+    assert edge_index.shape[1] > 0
+    # ...and the unmatched row is reported, not silently dropped.
+    assert any("NoSuchDistrict" in record.message for record in caplog.records)

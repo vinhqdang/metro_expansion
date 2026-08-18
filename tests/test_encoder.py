@@ -30,6 +30,23 @@ def test_relational_layer_output_shape():
     assert torch.isfinite(out).all()
 
 
+def test_relational_layer_projects_residual_when_dims_differ():
+    # Exercises the residual_proj branch (in_dim != hidden_dim), used
+    # internally by HeteroGNNEncoder's first layer after input_proj but not
+    # otherwise reachable through HeteroGNNEncoder itself.
+    node_features, spatial_ei, spatial_ew, od_ei, od_ew = make_toy_graph(in_dim=4)
+    layer = RelationalMessagePassingLayer(in_dim=4, hidden_dim=10)
+    assert layer.residual_proj is not None
+    out = layer(node_features, spatial_ei, spatial_ew, od_ei, od_ew)
+    assert out.shape == (6, 10)
+    assert torch.isfinite(out).all()
+
+    loss = out.sum()
+    loss.backward()
+    assert layer.residual_proj.weight.grad is not None
+    assert torch.isfinite(layer.residual_proj.weight.grad).all()
+
+
 def test_relational_layer_handles_empty_edge_set():
     node_features, spatial_ei, spatial_ew, _, _ = make_toy_graph(in_dim=8)
     empty_ei = torch.empty((2, 0), dtype=torch.long)

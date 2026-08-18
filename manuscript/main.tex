@@ -55,6 +55,7 @@
 \usepackage{algorithmicx}%
 \usepackage{algpseudocode}%
 \usepackage{listings}%
+\usepackage{tabularx}%
 %%%%
 
 %%%%%=============================================================================%%%%
@@ -109,7 +110,7 @@
 %% Sample for unstructured abstract %%
 %%==================================%%
 
-\abstract{The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work has separately shown that graph neural network (GNN) state encoders substantially improve demand satisfaction over heuristics, that multi-objective reward decomposition can balance demand against social equity and accessibility, and that tabular RL can match deep RL performance at a fraction of the training cost and carbon footprint -- but no single method combines all three, and none has been tested across networks spanning small emerging systems to some of the largest urban rail networks in the world. Emerging systems pose an additional practical difficulty: with only one or two operating lines, the rail network alone is too sparse to define a rich set of candidate expansion regions or to estimate travel demand. We propose a GNN-based, multi-objective actor-critic policy for urban rail transit (metro and tram/light-rail) network expansion that scalarizes demand, equity, and accessibility objectives via Tchebycheff decomposition, and that is made sample- and carbon-efficient through cross-city curriculum transfer (pretraining on smaller networks before fine-tuning on larger ones) combined with prioritized experience replay and reward shaping. To address data sparsity in emerging systems, each city's existing bus network is used purely as an auxiliary signal -- informing candidate region definition and providing a travel-demand proxy -- rather than as part of the action space; the policy's decisions and the resulting network design remain rail-only throughout. We evaluate the method across multiple Asian cities spanning at least two orders of magnitude in rail network scale, anchored by Hanoi and Ho Chi Minh City (Vietnam, small/emerging metro) and Xi'an and Chengdu (China, medium and very large metro); the final city set is extended based on confirmed open-data availability. [DRAFT -- results pending; abstract to be finalized once experiments are complete.]}
+\abstract{The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work has shown that graph neural network (GNN) state encoders improve demand satisfaction over heuristics, that multi-objective reward decomposition can balance demand against social equity and accessibility, and that tabular RL can match deep RL performance at a fraction of the training cost and carbon footprint -- but no method combines all three, and none has been tested from small emerging systems to the world's largest urban rail networks. Emerging systems pose a further difficulty: with only one or two operating lines, the rail network alone is too sparse to define candidate expansion regions or estimate demand. We propose a GNN-based, multi-objective actor-critic policy for urban rail transit (metro and tram/light-rail) network expansion, scalarizing demand, equity, and accessibility via Tchebycheff decomposition, made sample- and carbon-efficient via cross-city curriculum transfer and prioritized replay with reward shaping. To address data sparsity in emerging systems, each city's existing bus network is used purely as an auxiliary signal -- informing candidate-region definition and demand proxies, never the action space; decisions and the resulting network design remain rail-only throughout. We evaluate across multiple Asian cities spanning roughly an order of magnitude in current rail network scale, anchored by Hanoi and Ho Chi Minh City (Vietnam) and Xi'an and Chengdu (China), extended as further open data is confirmed. [DRAFT -- results pending.]}
 
 \keywords{metro network expansion, reinforcement learning, graph neural networks, multi-objective optimization, social equity, transfer learning}
 
@@ -131,7 +132,7 @@ Separately, \citet{kang2019} address coordinating last-train timetables with bus
 
 This paper addresses three open gaps in the rail network expansion literature. First, no existing MNEP method combines a GNN state representation with a multi-objective fairness-aware reward. Second, no study tests whether tabular RL truly remains sufficient at the scale of the world's largest metro networks, nor at the opposite extreme of small, data-sparse emerging systems. Third, all three MNEP papers above train and evaluate a separate policy per city from scratch, leaving open whether learned expansion policies transfer across cities of different scale.
 
-We propose a GNN-based, multi-objective actor-critic policy for metro network expansion, trained with a cross-city curriculum that transfers policy weights from small networks to large ones, combined with prioritized experience replay and reward shaping for sample efficiency. We evaluate the method across multiple Asian cities spanning at least two orders of magnitude in metro network scale, anchored by Hanoi and Ho Chi Minh City (Vietnam) and Xi'an and Chengdu (China), with the final city set extended opportunistically to any additional city for which we can confirm sufficient open network, demand, and population data (Section~\ref{sec:data}).
+We propose a GNN-based, multi-objective actor-critic policy for metro network expansion, trained with a cross-city curriculum that transfers policy weights from small networks to large ones, combined with prioritized experience replay and reward shaping for sample efficiency. We evaluate the method across multiple Asian cities spanning roughly an order of magnitude in current metro network length (Hanoi's $\sim$21\,km to Chengdu's $\sim$500+\,km), anchored by Hanoi and Ho Chi Minh City (Vietnam) and Xi'an and Chengdu (China), with the final city set extended opportunistically to any additional city for which we can confirm sufficient open network, demand, and population data (Section~\ref{sec:data}).
 
 %% TODO: state explicit contributions as a bulleted list once experiments are finalized.
 
@@ -143,9 +144,9 @@ The Transport Network Design Problem, of which MNEP is a sub-problem, has tradit
 
 \subsection{Reinforcement learning for MNEP}
 
-\citet{su2024} (MetroGNN) represent candidate urban regions as a heterogeneous multi-graph with spatial-contiguity and OD-flow edges, and train an attentive actor-critic policy with an action mask enforcing network-design feasibility constraints; the method improves OD demand satisfaction by over 30\% relative to prior heuristic and RL baselines, but optimizes a single objective (demand) and trains a fresh policy per city.
+\citet{su2024} (MetroGNN) represent candidate urban regions as a heterogeneous multi-graph with spatial-contiguity and OD-flow edges, and train an attentive actor-critic policy with an action mask enforcing network-design feasibility constraints; the method improves OD demand satisfaction over prior heuristic and RL baselines by 15.9\% on average across their evaluated scenarios (exceeding 30\% in higher-budget/complex cases), but optimizes a single objective (demand) and trains a fresh policy per city.
 
-\citet{zhang2024} formulate MNEP as sequential station selection and use a multi-objective actor-critic framework, integrating Tchebycheff decomposition to combine OD demand, social equity, and radiation accessibility into a single scalarized reward without limiting the search to a fixed weighting. Their method outperforms single-objective and weighted-sum baselines by over 30\% but does not use a graph-structured state representation.
+\citet{zhang2024} formulate MNEP as sequential station selection and use a multi-objective actor-critic framework, integrating Tchebycheff decomposition to combine OD demand, social equity, and radiation accessibility into a single scalarized reward without limiting the search to a fixed weighting. Their method outperforms traditional heuristic algorithms (genetic algorithm, ant colony, mathematical programming) by over 30\% and their own weighted-sum RL variant by a smaller margin, using a real-world Xi'an case study; it does not use a graph-structured state representation.
 
 \citet{michailidis2026} reformulate MNEP as a Non-Markovian Reward Decision Process to shrink the effective state-action space, and show a tabular Monte Carlo RL method with fairness-based reward functions matches deep RL performance while using 18$\times$ fewer training episodes and producing 12$\times$ less estimated CO$_2$, evaluated on Xi'an and Amsterdam.
 
@@ -212,16 +213,16 @@ We anchor the evaluation on four cities chosen to span small/emerging to very la
 
 \begin{table}[h]
 \caption{Case study cities, their role in the experimental design, and confirmed open-data status (see text for sources)}\label{tab:cities}
-\begin{tabular}{@{}llll@{}}
+\begin{tabularx}{\textwidth}{@{}l X X X@{}}
 \toprule
 City & Role & Scale (approx.) & Data status \\
 \midrule
 Hanoi & Novel, small/emerging metro & 2 lines + planned extensions & Network/boundaries strong; OD is proxy-only \\
-Ho Chi Minh City & Novel, medium/growing metro & 1 line (2024) + planned lines & Strongest of the four (CityScope OD+POI data) \\
-Xi'an & Direct benchmark vs.\ \citet{michailidis2026} & Medium, previously studied & OD grid likely reusable from prior code release \\
-Chengdu & Scale stress-test & $\sim$500+ km, world's largest & Network geometry available; ridership portal unconfirmed \\
+Ho Chi Minh City & Novel, medium/growing metro & 1 line (2024) + planned lines & Strongest of the four: real shapefiles for metro, bus, 2018 OD survey, population, POI, census (confirmed) \\
+Xi'an & Direct benchmark vs.\ \citet{michailidis2026} and \citet{zhang2024} (both use Xi'an) & Medium, previously studied & OD grid confirmed reusable from prior code release \\
+Chengdu & Scale stress-test & $\sim$500+ km, world's largest & Network geometry confirmed (multi-year); ridership portal unconfirmed \\
 \botrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Data sources per city}
@@ -230,16 +231,14 @@ The sources below have been directly verified by inspecting the underlying repos
 
 \textbf{Network topology and planned extensions.} Existing rail geometry for all four cities is obtainable from OpenStreetMap/Overpass. For Xi'an and Chengdu specifically, a public dataset covering 38 Chinese cities provides \emph{year-by-year} (circa 2010--2019) station-point and line shapefiles, confirmed by direct inspection; because it is multi-year, it additionally enables a validation protocol not used by any of the three reference RL papers -- checking whether the policy's highest-priority predicted extensions, given an early-year network as the starting state, match what was actually built by a later year. Planned-extension maps exist as official planning diagrams for all four cities (Hanoi's 8-line master plan; Ho Chi Minh City's MAUR master plan; Xi'an's and Chengdu's Five-Year-Plan transport documents) but require manual digitization -- none is available as a ready-to-use shapefile.
 
-\textbf{OD demand.} Ho Chi Minh City has by far the strongest confirmed source: the public \texttt{CityScope/CSL\_HCMC} repository (MIT Media Lab) ships real shapefiles -- metro routes/stations, bus routes/stops, a 2018 household-travel-survey OD matrix, district- and ward-level population, POIs, and ward-level census with age breakdown -- verified by direct inspection, though the repository carries no explicit license, so we treat it as research/fair-use only and do not redistribute the underlying files. For Xi'an, a public MIT-licensed environment (via \citet{michailidis2026}'s code release and its \texttt{mo-tndp} submodule) ships a ready-to-use 29$\times$29-cell grid with 463{,}010 nonzero OD pairs, the existing metro lines as grid-coordinate paths, and per-cell house-price/equity groupings -- confirmed by direct inspection. That dataset's own citation file attributes it to \citet{michailidis2024} rather than to the KDD~2020 paper we had provisionally assumed as its origin; we cite the confirmed source and do not assert the earlier, unverified lineage. For Hanoi and Chengdu (and as a fallback for the others), we construct a gravity-model demand proxy from WorldPop population-density rasters and OpenStreetMap/Amap/Baidu POI density, calibrated against published ridership figures (e.g., Hanoi's Cat Linh--Ha Dong line: 13.68M riders in 2024; Ho Chi Minh City Line 1: 20.56M riders in 2025).
+\textbf{OD demand.} Ho Chi Minh City has by far the strongest confirmed source: the public \texttt{CityScope/CSL\_HCMC} repository (MIT Media Lab) ships real shapefiles -- metro routes/stations, bus routes/stops, a 2018 household-travel-survey OD matrix, district- and ward-level population, points of interest (POI), and ward-level census with age breakdown -- verified by direct inspection, though the repository carries no explicit license, so we treat it as research/fair-use only and do not redistribute the underlying files. For Xi'an, a public MIT-licensed environment (via \citet{michailidis2026}'s code release and its \texttt{mo-tndp} submodule) ships a ready-to-use 29$\times$29-cell grid with 463{,}010 nonzero OD pairs, the existing metro lines as grid-coordinate paths, and per-cell house-price/equity groupings -- confirmed by direct inspection. That dataset's own citation file attributes it to \citet{michailidis2024} rather than to the KDD~2020 paper we had provisionally assumed as its origin; we cite the confirmed source and do not assert the earlier, unverified lineage. Notably, \citet{zhang2024} -- one of our three reference RL baselines -- also uses Xi'an as its case study, so our Xi'an results can be compared against two, not just one, of the three reference methods' originally-reported numbers. For Hanoi and Chengdu (and as a fallback for the others), we construct a gravity-model demand proxy from WorldPop population-density rasters and OpenStreetMap/Amap/Baidu POI density, calibrated against published ridership figures (e.g., Hanoi's Cat Linh--Ha Dong line: 13.68M riders in 2025, up 15.3\% year-on-year; Ho Chi Minh City Line 1: 20.56M riders in 2025).
 
 \textbf{Bus network (auxiliary signal only).} Each city's existing bus route network is used solely as an auxiliary input to the rail expansion problem: it helps define a richer set of candidate expansion regions in cities where the rail network alone is too sparse (Hanoi, Ho Chi Minh City) and contributes an additional demand-proxy feature. Bus routes are never an output or design target of the method. Ho Chi Minh City's bus network is available as a real shapefile (CSL\_HCMC, above); the remaining cities use OpenStreetMap bus-route extraction.
 
-\textbf{Administrative boundaries / candidate regions.} GADM provides consistent district-level administrative boundaries for all four cities, usable to define MetroGNN-style candidate expansion regions.
+\textbf{Administrative boundaries / candidate regions.} GADM (the Database of Global Administrative Areas) provides consistent district-level administrative boundaries for all four cities, usable to define MetroGNN-style candidate expansion regions.
 
 \textbf{Coordinate systems.} Chinese POI sources (Amap, Baidu) report coordinates in the obfuscated GCJ-02 system, which must be converted to WGS84 before merging with OSM/metro station coordinates; this conversion step is required for Xi'an and Chengdu but not for the OSM-only Vietnamese cities.
 
-%% TODO: papers still not obtained (currently paywalled) -- confirm which city zhang2024
-%% (Transportation Research Part C) uses as its case study; obtain if possible.
 %% TODO: inspect github.com/tsinghua-fib-lab/MetroGNN (Beijing/Changsha data) as a candidate
 %% 5th/6th city for the open-ended city set.
 %% TODO: check data.chengdu.gov.cn for a possible metro ridership open-data catalog entry.
@@ -282,8 +281,9 @@ Ours (full) & -- & -- & -- & -- \\
 %%   match Michailidis et al.'s claim once tested on Chengdu-scale networks?
 %% - effect of the cross-city curriculum on final policy quality, not just training cost
 %%   (does transfer from a small network ever hurt a large network's final policy?)
-%% - effect of adding the bus network to the action space on demand/equity/accessibility,
-%%   isolated via ablation
+%% - effect of the bus-derived auxiliary signal (candidate-region richness, demand proxy)
+%%   on demand/equity/accessibility, isolated via ablation (with/without bus-derived
+%%   features on the STATE -- action space remains rail-only in every ablation)
 %% - limitations: reliance on demand proxies for cities without survey/smart-card data;
 %%   generalizability beyond the evaluated city set
 

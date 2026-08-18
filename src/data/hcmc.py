@@ -9,11 +9,20 @@ to a local clone via `data_dir`.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
+
+
+def _normalize_district_name(name: str) -> str:
+    """Normalize a district name for fuzzy matching (e.g. survey's "BinhTan"
+    vs. zones' "Binh Tan"): lowercase, strip whitespace/punctuation."""
+    return "".join(ch for ch in str(name).lower() if ch.isalnum())
 
 
 def load_zones(data_dir: Path | str) -> gpd.GeoDataFrame:
@@ -99,7 +108,7 @@ def build_contiguity_edges(zones: gpd.GeoDataFrame) -> tuple[np.ndarray, np.ndar
         for j in candidate_idx:
             if j <= i:
                 continue
-            if geom.touches(zones.geometry.iloc[j]) or geom.intersects(zones.geometry.iloc[j]):
+            if geom.touches(zones.geometry.iloc[j]):
                 src.extend([i, j])
                 dst.extend([j, i])
 
@@ -118,22 +127,41 @@ def build_od_edges(
     each zone's share of that district's 2019 population -- a standard
     disaggregation approach when OD data is coarser than the candidate-region
     granularity.
+
+    District names are matched exactly first, then via a normalized
+    (lowercased, whitespace/punctuation-stripped) fallback, since the survey
+    and zones datasets disagree on spacing for some names (e.g. survey's
+    "BinhTan" vs. zones' "Binh Tan"). Any row that still can't be matched is
+    logged (not silently dropped) and excluded from the resulting edges; a
+    summary of unmatched names and their total lost flow is logged once at
+    the end so data-quality gaps are visible rather than silent.
     """
     zone_dist = zones["Dist_Name"].to_numpy()
     zone_pop = zones["Pop_2019"].fillna(0.0).to_numpy(dtype=np.float64)
+    zone_dist_normalized = np.array([_normalize_district_name(d) for d in zone_dist])
 
     dist_pop_total: dict[str, float] = {}
     for dist_name, pop in zip(zone_dist, zone_pop):
         dist_pop_total[dist_name] = dist_pop_total.get(dist_name, 0.0) + pop
 
-    src, dst, weight = [], [], []
-    for _, row in od.iterrows():
-        start_zones = np.where(zone_dist == row["Start"])[0]
-        end_zones = np.where(zone_dist == row["End"])[0]
-        if len(start_zones) == 0 or len(end_zones) == 0:
-            continue  # district name in survey has no matching zone (data-quality gap; log upstream)
+    def _match_zones(name: str) -> np.ndarray:
+        exact = np.where(zone_dist == name)[0]
+        if len(exact) > 0:
+            return exact
+        return np.where(zone_dist_normalized == _normalize_district_name(name))[0]
 
+    src, dst, weight = [], [], []
+    unmatched: dict[str, float] = {}
+    for _, row in od.iterrows():
+        start_zones = _match_zones(row["Start"])
+        end_zones = _match_zones(row["End"])
         quantity = float(row["Quantity_M"]) if pd.notna(row["Quantity_M"]) else 0.0
+        if len(start_zones) == 0:
+            unmatched[row["Start"]] = unmatched.get(row["Start"], 0.0) + quantity
+        if len(end_zones) == 0:
+            unmatched[row["End"]] = unmatched.get(row["End"], 0.0) + quantity
+        if len(start_zones) == 0 or len(end_zones) == 0:
+            continue
         for i in start_zones:
             share_i = zone_pop[i] / max(dist_pop_total[zone_dist[i]], 1e-6)
             for j in end_zones:
@@ -143,6 +171,14 @@ def build_od_edges(
                     src.append(i)
                     dst.append(j)
                     weight.append(w)
+
+    if unmatched:
+        logger.warning(
+            "build_od_edges: %d district name(s) had no matching zone even after "
+            "normalization, dropping their survey flow: %s",
+            len(unmatched),
+            {name: round(total, 1) for name, total in unmatched.items()},
+        )
 
     if not src:
         return np.zeros((2, 0), dtype=np.int64), np.zeros(0, dtype=np.float64)

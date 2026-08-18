@@ -32,7 +32,7 @@ Reference literature (4 papers, all present in repo root as PDFs):
 ## 3. Method
 
 - **State encoder**: heterogeneous multi-graph GNN over urban regions/candidate stations. Two edge types: spatial contiguity, OD-flow association (per MetroGNN §3.1–3.2). Produces per-node embeddings via message passing.
-- **Policy/value network**: attentive actor-critic over embedded graph; action = select next node (extend existing line / start new line), masked for network-design feasibility constraints (station spacing, angles, budget).
+- **Policy/value network**: attentive actor-critic over embedded graph; action = select next node (extend existing rail line / start new rail line -- metro or tram/light-rail only, never a bus route; see §9), masked for network-design feasibility constraints (station spacing, angles, budget). Bus-derived data enters as node/edge features on the rail graph, not as separate actions.
 - **Reward**: vector reward `(demand_satisfaction, social_equity, radiation_accessibility)`, scalarized via Tchebycheff decomposition (Zhang et al. §3.2) to support Pareto-style exploration rather than a fixed weighted sum.
 - **Efficiency layer**:
   - Cross-city curriculum: train on Hanoi and Xi'an first; initialize Ho Chi Minh City and Chengdu training from these weights.
@@ -80,3 +80,4 @@ Structure: Introduction → Related Work (the 4 reference papers) → Problem Fo
 - OD demand data for Hanoi/HCMC not yet confirmed available (see §4) — needs research pass before committing to data pipeline.
 - Reimplementing 3 baseline papers faithfully enough for fair comparison is nontrivial; may need to reach out to authors for code (MetroGNN and Michailidis et al. both mention public code/repos in-paper).
 - Chengdu's scale (~500+ km, hundreds of stations) may push GNN training cost/time significantly higher than the other three cities — needs early feasibility check before full experimental run.
+- Scope drift risk: because bus data is used throughout the pipeline (candidate regions, demand proxy), any code, writing, or ablation that starts treating bus routes as an action/output rather than an input feature would push the paper out of scope for a rail-focused journal (see §9). Concretely caught once already (a stale Discussion TODO in `manuscript/main.tex` proposed a "bus-in-action-space" ablation contradicting the rest of the paper) — worth a scope grep (`grep -in bus manuscript/main.tex`) on every future pass.
