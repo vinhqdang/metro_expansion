@@ -27,7 +27,7 @@ class RelationalMessagePassingLayer(nn.Module):
         super().__init__()
         self.spatial_lin = nn.Linear(in_dim, hidden_dim, bias=False)
         self.od_lin = nn.Linear(in_dim, hidden_dim, bias=False)
-        self.combine_lin = nn.Linear(2 * hidden_dim, hidden_dim)
+        self.combine_lin = nn.Linear(2 * hidden_dim, hidden_dim, bias=False)
         # residual connection requires in_dim == hidden_dim; project if not.
         self.residual_proj = None if in_dim == hidden_dim else nn.Linear(in_dim, hidden_dim, bias=False)
 
@@ -79,7 +79,7 @@ class HeteroGNNEncoder(nn.Module):
         if num_layers < 1:
             raise ValueError("num_layers must be >= 1")
 
-        self.input_proj = nn.Linear(in_dim, hidden_dim)
+        self.input_proj = nn.Linear(in_dim, hidden_dim, bias=False)
         self.layers = nn.ModuleList(
             [RelationalMessagePassingLayer(hidden_dim, hidden_dim) for _ in range(num_layers)]
         )

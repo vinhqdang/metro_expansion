@@ -158,7 +158,7 @@ None of the three reports results outside of a handful of already-mature metro s
 
 \section{Problem Formulation}\label{sec:problem}
 
-Following \citet{su2024} and \citet{zhang2024}, we formulate rail network expansion as a finite-horizon Markov Decision Process (MDP) over a set of candidate regions $\mathcal{N} = \{n_1, \dots, n_k\}$ (Section~\ref{sec:data}). A rail network is a graph $M = (V, E)$ with $V \subseteq \mathcal{N}$ the selected stations and $E$ the line segments connecting them.
+Following \citet{su2024} and \citet{zhang2024}, we formulate rail network expansion as a finite-horizon Markov Decision Process (MDP) over a set of candidate regions $\mathcal{N} = \{n_1, \dots, n_k\}$ (Section~\ref{sec:data}). A rail network at step $t$ is a graph $M_t = (V_t, E_t)$ with $V_t \subseteq \mathcal{N}$ the selected stations and $E_t$ the line segments connecting them.
 
 \textbf{State.} $S_t = (M_t, b_t)$, the partial rail network built so far and the remaining construction budget. Bus-derived features (candidate-region richness, demand-proxy signal; Section~\ref{sec:data}) are encoded as node/edge attributes within $M_t$'s graph representation, not as a separate part of the state that could itself be modified by an action.
 
@@ -176,7 +176,7 @@ where $C^{\text{demand}}(M)$ follows \citeauthor{su2024}'s OD-demand-satisfactio
 \begin{equation}
 g(\mathbf{r}_t \mid \mathbf{w}, \mathbf{z}^*) = \max_j \left[ w_j \left| r_t^{(j)} - z^*_j \right| \right] + \varepsilon \sum_j w_j \left| r_t^{(j)} - z^*_j \right|,\label{eq:tchebycheff}
 \end{equation}
-with ideal point $\mathbf{z}^* = (1,1,1)$ (all objectives normalized to $[0,1]$) and small $\varepsilon > 0$ to exclude weakly-Pareto-optimal solutions, matching the implementation in \texttt{src/rl/reward.py}. The policy $\pi_\theta$ is trained to maximize the expected discounted sum of scalarized rewards, $\mathbb{E}_{\mathbf{w}}\left[\sum_t -g(\mathbf{r}_t \mid \mathbf{w}, \mathbf{z}^*)\right]$, over the sampled weight distribution, so a single trained policy supports the full range of demand/equity/accessibility trade-offs rather than one fixed weighting.
+with ideal point $\mathbf{z}^* = (1,1,1)$ (all objectives normalized to $[0,1]$) and small $\varepsilon > 0$ to exclude weakly-Pareto-optimal solutions, matching the implementation in \texttt{src/rl/reward.py}. The policy $\pi_\theta$ is trained to maximize the expected episodic sum of scalarized rewards, $\mathbb{E}_{\mathbf{w}}\left[\sum_t -g(\mathbf{r}_t \mid \mathbf{w}, \mathbf{z}^*)\right]$, over the sampled weight distribution (undiscounted: each finite-horizon episode ends when the construction budget is exhausted, per the Transition paragraph above), so a single trained policy supports the full range of demand/equity/accessibility trade-offs rather than one fixed weighting.
 
 \section{Method}\label{sec:method}
 
