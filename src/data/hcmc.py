@@ -185,5 +185,8 @@ def build_od_edges(
 
     edge_index = np.array([src, dst], dtype=np.int64)
     edge_weight = np.array(weight, dtype=np.float64)
-    edge_weight = edge_weight / edge_weight.max()  # normalize to [0, 1] for comparability across cities
+    # Rescale to [0, 1] by this city's own max flow -- a per-city normalization
+    # for GNN input-feature scaling, not a claim that raw magnitudes are
+    # comparable in absolute terms across different cities' OD surveys.
+    edge_weight = edge_weight / edge_weight.max()
     return edge_index, edge_weight

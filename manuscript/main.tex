@@ -220,7 +220,7 @@ City & Role & Scale (approx.) & Data status \\
 Hanoi & Novel, small/emerging metro & 2 lines + planned extensions & Network/boundaries strong; OD is proxy-only \\
 Ho Chi Minh City & Novel, medium/growing metro & 1 line (2024) + planned lines & Strongest of the four: real shapefiles for metro, bus, 2018 OD survey, population, POI, census (confirmed) \\
 Xi'an & Direct benchmark vs.\ \citet{michailidis2026} and \citet{zhang2024} (both use Xi'an) & Medium, previously studied & OD grid confirmed reusable from prior code release \\
-Chengdu & Scale stress-test & $\sim$500+ km, world's largest & Network geometry confirmed (multi-year); ridership portal unconfirmed \\
+Chengdu & Scale stress-test & $\sim$500+ km, one of world's largest & Network geometry confirmed (multi-year); ridership portal unconfirmed \\
 \botrule
 \end{tabularx}
 \end{table}
@@ -233,7 +233,7 @@ The sources below have been directly verified by inspecting the underlying repos
 
 \textbf{OD demand.} Ho Chi Minh City has by far the strongest confirmed source: the public \texttt{CityScope/CSL\_HCMC} repository (MIT Media Lab) ships real shapefiles -- metro routes/stations, bus routes/stops, a 2018 household-travel-survey OD matrix, district- and ward-level population, points of interest (POI), and ward-level census with age breakdown -- verified by direct inspection, though the repository carries no explicit license, so we treat it as research/fair-use only and do not redistribute the underlying files. For Xi'an, a public MIT-licensed environment (via \citet{michailidis2026}'s code release and its \texttt{mo-tndp} submodule) ships a ready-to-use 29$\times$29-cell grid with 463{,}010 nonzero OD pairs, the existing metro lines as grid-coordinate paths, and per-cell house-price/equity groupings -- confirmed by direct inspection. That dataset's own citation file attributes it to \citet{michailidis2024} rather than to the KDD~2020 paper we had provisionally assumed as its origin; we cite the confirmed source and do not assert the earlier, unverified lineage. Notably, \citet{zhang2024} -- one of our three reference RL baselines -- also uses Xi'an as its case study, so our Xi'an results can be compared against two, not just one, of the three reference methods' originally-reported numbers. For Hanoi and Chengdu (and as a fallback for the others), we construct a gravity-model demand proxy from WorldPop population-density rasters and OpenStreetMap/Amap/Baidu POI density, calibrated against published ridership figures (e.g., Hanoi's Cat Linh--Ha Dong line: 13.68M riders in 2025, up 15.3\% year-on-year; Ho Chi Minh City Line 1: 20.56M riders in 2025).
 
-\textbf{Bus network (auxiliary signal only).} Each city's existing bus route network is used solely as an auxiliary input to the rail expansion problem: it helps define a richer set of candidate expansion regions in cities where the rail network alone is too sparse (Hanoi, Ho Chi Minh City) and contributes an additional demand-proxy feature. Bus routes are never an output or design target of the method. Ho Chi Minh City's bus network is available as a real shapefile (CSL\_HCMC, above); the remaining cities use OpenStreetMap bus-route extraction.
+\textbf{Bus network (auxiliary signal only).} Each city's existing bus route network is used solely as an auxiliary input to the rail expansion problem: it helps define a richer set of candidate expansion regions in cities where the rail network alone is too sparse (Hanoi, Ho Chi Minh City) and contributes an additional demand-proxy feature. Bus routes are never an output or design target of the method. Ho Chi Minh City's bus network is available as a real shapefile (CSL\_HCMC, above); the remaining cities use OpenStreetMap bus-route extraction. \emph{Coverage caveat, confirmed by direct inspection:} CSL\_HCMC's 189 bus stops fall entirely within a small downtown/pilot-study area, giving nonzero bus-derived signal for only $\sim$32 of the city's 322 candidate zones ($\sim$10\%); outside that area the bus feature is uniformly zero, and the OpenStreetMap fallback (or a wider bus dataset, if found) will be needed for full-city coverage.
 
 \textbf{Administrative boundaries / candidate regions.} GADM (the Database of Global Administrative Areas) provides consistent district-level administrative boundaries for all four cities, usable to define MetroGNN-style candidate expansion regions.
 
@@ -241,9 +241,8 @@ The sources below have been directly verified by inspecting the underlying repos
 
 %% TODO: inspect github.com/tsinghua-fib-lab/MetroGNN (Beijing/Changsha data) as a candidate
 %% 5th/6th city for the open-ended city set.
-%% TODO: check data.chengdu.gov.cn for a possible metro ridership open-data catalog entry.
-%% Full source-by-source detail: docs/data_sources.md
 %% TODO: manually check data.chengdu.gov.cn for a metro passenger-flow open-data catalog entry.
+%% Full source-by-source detail: docs/data_sources.md
 
 \section{Experiments and Results}\label{sec:experiments}
 
