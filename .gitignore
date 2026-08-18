@@ -239,3 +239,15 @@ external/
 /1-s2.0-*.pdf
 /2403.09197v1.pdf
 /2606.04167v1.pdf
+
+# Large/raw geodata (fetch via scripts/, do not commit)
+data/*/raw/
+*.shp
+*.shx
+*.dbf
+*.gpkg
+*.tif
+*.tiff
+*.osm.pbf
+*.graphml
+!data/README.md
