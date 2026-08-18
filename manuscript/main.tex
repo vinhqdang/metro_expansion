@@ -1,0 +1,332 @@
+%Version 3.1 December 2024
+% See section 11 of the User Manual for version history
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%\documentclass[referee,sn-basic]{sn-jnl}% referee option is meant for double line spacing
+
+%%=======================================================%%
+%% to print line numbers in the margin use lineno option %%
+%%=======================================================%%
+
+%%\documentclass[lineno,pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%=========================================================================================%%
+%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
+%%=========================================================================================%%
+
+%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove �Numbered� in the optional parenthesis. 
+%%The option is available for: sn-basic.bst, sn-chicago.bst%  
+ 
+%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
+%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+%%\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
+%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
+\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style — matches Railway Engineering Science's numbered [n] citation style
+%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
+%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
+%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
+
+%%%% Standard Packages
+%%<additional latex packages if required can be included here>
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+%%%%
+
+%%%%%=============================================================================%%%%
+%%%%  Remarks: This template is provided to aid authors with the preparation
+%%%%  of original research articles intended for submission to journals published 
+%%%%  by Springer Nature. The guidance has been prepared in partnership with 
+%%%%  production teams to conform to Springer Nature technical requirements. 
+%%%%  Editorial and presentation requirements differ among journal portfolios and 
+%%%%  research disciplines. You may find sections in this template are irrelevant 
+%%%%  to your work and are empowered to omit any such section if allowed by the 
+%%%%  journal you intend to submit to. The submission guidelines and policies 
+%%%%  of the journal take precedence. A detailed User Manual is available in the 
+%%%%  template package for technical guidance.
+%%%%%=============================================================================%%%%
+
+%% as per the requirement new theorem styles can be included as shown below
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}% 
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
+%%\unnumbered% uncomment this for unnumbered level heads
+
+\begin{document}
+
+\title[Fair and Transferable Graph RL for Rail Transit Expansion]{Fair and Transferable Graph Reinforcement Learning for Urban Rail Transit Network Expansion Across Asian Cities}
+
+%%=============================================================%%
+%% GivenName	-> \fnm{Joergen W.}
+%% Particle	-> \spfx{van der} -> surname prefix
+%% FamilyName	-> \sur{Ploeg}
+%% Suffix	-> \sfx{IV}
+%% \author*[1,2]{\fnm{Joergen W.} \spfx{van der} \sur{Ploeg} 
+%%  \sfx{IV}}\email{iauthor@gmail.com}
+%%=============================================================%%
+
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
+
+%%==================================%%
+%% Sample for unstructured abstract %%
+%%==================================%%
+
+\abstract{The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work has separately shown that graph neural network (GNN) state encoders substantially improve demand satisfaction over heuristics, that multi-objective reward decomposition can balance demand against social equity and accessibility, and that tabular RL can match deep RL performance at a fraction of the training cost and carbon footprint -- but no single method combines all three, and none has been tested across networks spanning small emerging systems to some of the largest urban rail networks in the world. Emerging systems pose an additional practical difficulty: with only one or two operating lines, the rail network alone is too sparse to define a rich set of candidate expansion regions or to estimate travel demand. We propose a GNN-based, multi-objective actor-critic policy for urban rail transit (metro and tram/light-rail) network expansion that scalarizes demand, equity, and accessibility objectives via Tchebycheff decomposition, and that is made sample- and carbon-efficient through cross-city curriculum transfer (pretraining on smaller networks before fine-tuning on larger ones) combined with prioritized experience replay and reward shaping. To address data sparsity in emerging systems, each city's existing bus network is used purely as an auxiliary signal -- informing candidate region definition and providing a travel-demand proxy -- rather than as part of the action space; the policy's decisions and the resulting network design remain rail-only throughout. We evaluate the method across multiple Asian cities spanning at least two orders of magnitude in rail network scale, anchored by Hanoi and Ho Chi Minh City (Vietnam, small/emerging metro) and Xi'an and Chengdu (China, medium and very large metro); the final city set is extended based on confirmed open-data availability. [DRAFT -- results pending; abstract to be finalized once experiments are complete.]}
+
+\keywords{metro network expansion, reinforcement learning, graph neural networks, multi-objective optimization, social equity, transfer learning}
+
+%%\pacs[JEL Classification]{D8, H51}
+
+%%\pacs[MSC Classification]{35A01, 65L10, 65L12, 65L20, 65L70}
+
+\maketitle
+
+\section{Introduction}\label{sec1}
+
+Urban metro systems are among the most capital-intensive pieces of city infrastructure, and decisions about where to extend a network shape a city's mobility, equity, and economic geography for decades. The \emph{Metro Network Expansion Problem} (MNEP) -- selecting which stations or regions to add to an existing metro network under a limited budget -- is a combinatorial, NP-hard sequential decision problem, and is itself a special case of the broader \emph{Transport Network Design Problem} (TNDP) \citep{su2024}. Classical approaches rely on mixed-integer programming or heuristics that require restrictive, expert-defined search-space constraints \citep{zhang2024}.
+
+Recent work has reframed MNEP as a Markov Decision Process solvable by reinforcement learning (RL). \citet{su2024} show that a graph neural network (GNN) state encoder over a heterogeneous region graph substantially improves origin-destination (OD) demand satisfaction over prior heuristics and RL baselines. \citet{zhang2024} instead emphasize the multi-objective nature of expansion decisions, decomposing a reward over OD demand, social equity, and accessibility via Tchebycheff scalarization, but without a GNN state representation. Most recently, \citet{michailidis2026} argue that MNEP's state-action space is small enough that deep RL and GNNs are unnecessary altogether, and show that a tabular RL formulation matches deep RL performance with an order-of-magnitude fewer training episodes and a substantially smaller carbon footprint -- evaluated, however, only on Xi'an and Amsterdam, both modest-scale networks.
+
+All three of these studies treat MNEP purely on the basis of the existing rail network, and all train and evaluate a separate policy per city from scratch. This creates a practical difficulty for emerging metro systems that are still very small: at the time of writing, Hanoi operates only two lines and Ho Chi Minh City only one, giving too few candidate regions and too little usable ridership signal to define a well-posed expansion problem or estimate travel demand directly from rail data alone. We address this purely as a \emph{data} problem, not a scope change to the method: where metro-derived signal is too sparse, we use each city's existing bus network only as an auxiliary input for defining candidate expansion regions and as a demand proxy (Section~\ref{sec:data}). The method's action space, objectives, and object of design remain metro network expansion throughout; no bus-route decisions are made by the policy.
+
+Separately, \citet{kang2019} address coordinating last-train timetables with bus bridging services on an \emph{existing} urban railway network. This is an operational-phase problem, and we treat it as related work rather than a methodological component: it evidences that bus service is planned around rail networks in practice, supporting our choice to draw on bus data as an auxiliary signal, but our contribution does not extend to modeling bus bridging or timetabling.
+
+This paper addresses three open gaps in the rail network expansion literature. First, no existing MNEP method combines a GNN state representation with a multi-objective fairness-aware reward. Second, no study tests whether tabular RL truly remains sufficient at the scale of the world's largest metro networks, nor at the opposite extreme of small, data-sparse emerging systems. Third, all three MNEP papers above train and evaluate a separate policy per city from scratch, leaving open whether learned expansion policies transfer across cities of different scale.
+
+We propose a GNN-based, multi-objective actor-critic policy for metro network expansion, trained with a cross-city curriculum that transfers policy weights from small networks to large ones, combined with prioritized experience replay and reward shaping for sample efficiency. We evaluate the method across multiple Asian cities spanning at least two orders of magnitude in metro network scale, anchored by Hanoi and Ho Chi Minh City (Vietnam) and Xi'an and Chengdu (China), with the final city set extended opportunistically to any additional city for which we can confirm sufficient open network, demand, and population data (Section~\ref{sec:data}).
+
+%% TODO: state explicit contributions as a bulleted list once experiments are finalized.
+
+\section{Related Work}\label{sec:related}
+
+\subsection{Metro network design and expansion}
+
+The Transport Network Design Problem, of which MNEP is a sub-problem, has traditionally been addressed with mixed-integer programming and metaheuristics (genetic algorithms, simulated annealing, tabu search, ant colony optimization), which require restricting the search space with predefined corridors or extensive hand-crafted constraints \citep{su2024}. Framing MNEP as a sequential decision process addressed by RL removes the need for these restrictions by allowing the agent to explore the design space directly.
+
+\subsection{Reinforcement learning for MNEP}
+
+\citet{su2024} (MetroGNN) represent candidate urban regions as a heterogeneous multi-graph with spatial-contiguity and OD-flow edges, and train an attentive actor-critic policy with an action mask enforcing network-design feasibility constraints; the method improves OD demand satisfaction by over 30\% relative to prior heuristic and RL baselines, but optimizes a single objective (demand) and trains a fresh policy per city.
+
+\citet{zhang2024} formulate MNEP as sequential station selection and use a multi-objective actor-critic framework, integrating Tchebycheff decomposition to combine OD demand, social equity, and radiation accessibility into a single scalarized reward without limiting the search to a fixed weighting. Their method outperforms single-objective and weighted-sum baselines by over 30\% but does not use a graph-structured state representation.
+
+\citet{michailidis2026} reformulate MNEP as a Non-Markovian Reward Decision Process to shrink the effective state-action space, and show a tabular Monte Carlo RL method with fairness-based reward functions matches deep RL performance while using 18$\times$ fewer training episodes and producing 12$\times$ less estimated CO$_2$, evaluated on Xi'an and Amsterdam.
+
+None of the three reports results outside of a handful of already-mature metro systems, leaving open how well their approaches hold up on small, data-sparse emerging networks or on networks approaching the largest in the world.
+
+\subsection{Related operational-phase work on rail-bus coordination}
+
+\citet{kang2019} address last-train timetabling and bus bridging service coordination on an existing urban railway network via a decomposable mixed-integer linear program, showing that coordinating last-train connections across lines and dispatching bridging buses substantially reduces the number of stranded transfer passengers. This is an operational-phase problem -- it assumes a fixed rail topology and does not address network design -- so we treat it as related work rather than a methodological component of our approach. It does, however, evidence that bus service is planned and evaluated around a city's rail network in practice, which we draw on only to justify using bus data as an auxiliary demand/candidate-region signal (Section~\ref{sec:data}); our method neither designs nor evaluates bus routes.
+
+\section{Problem Formulation}\label{sec:problem}
+
+%% TODO: formalize MNEP following su2024/zhang2024 notation --
+%% state S_t = (rail network M_t, remaining budget b_t), action A_t = next rail
+%% node/station (metro or tram/light-rail extension), reward vector
+%% r_t = (demand, equity, accessibility), Tchebycheff scalarization, feasibility action
+%% mask (station spacing/angle/budget constraints). Bus-derived features enter the STATE
+%% only (candidate-region definition, demand proxy per Section~\ref{sec:data}), never the
+%% action space.
+
+\section{Method}\label{sec:method}
+
+\subsection{GNN state encoder}
+
+%% TODO: describe heterogeneous multi-graph encoder over the existing rail network
+%% (spatial-contiguity + OD-flow edges), following su2024 Sec. 3.1-3.2, adapted to the
+%% case-study cities. Bus-derived demand/candidate-region features (Section~\ref{sec:data})
+%% are incorporated as node/edge features on the rail graph, not as separate bus nodes/edges
+%% subject to expansion actions.
+
+\subsection{Multi-objective policy}
+
+%% TODO: describe attentive actor-critic policy/value network over the embedded graph,
+%% masked action selection over rail-extension actions only, and Tchebycheff-decomposed
+%% reward over (demand satisfaction, social equity, radiation accessibility), following
+%% zhang2024 Sec. 3.2.
+
+\subsection{Cross-city curriculum and sample efficiency}
+
+To address the training-cost and carbon-footprint critique of deep RL for MNEP raised by \citet{michailidis2026} without abandoning the GNN state representation, we introduce a cross-city curriculum: policy weights are pretrained on the smaller networks (Hanoi, Xi'an) and used to initialize training on the larger networks (Ho Chi Minh City, Chengdu), rather than training each city's policy from scratch. This is combined with prioritized experience replay over transition batches and potential-based reward shaping, which accelerates credit assignment without altering the optimal policy.
+
+\begin{algorithm}
+\caption{Cross-city curriculum training for the GNN multi-objective policy}\label{alg:curriculum}
+\begin{algorithmic}[1]
+\Require Cities ordered by network scale $C_1 \le C_2 \le \dots \le C_n$; Tchebycheff weight set $W$
+\State Initialize policy/value network parameters $\theta_0$ randomly
+\For{$i = 1, \dots, n$}
+    \State Initialize $\theta \gets \theta_{i-1}$ \Comment{transfer weights from the previous, smaller city}
+    \For{each training episode on city $C_i$}
+        \State Sample Tchebycheff weight vector $w \sim W$
+        \State Roll out policy on $C_i$'s region graph, collect transitions $(s_t, a_t, r_t, s_{t+1})$
+        \State Store transitions in prioritized replay buffer $\mathcal{D}_i$
+        \State Sample prioritized batch from $\mathcal{D}_i$, apply potential-based reward shaping
+        \State Update $\theta$ via actor-critic gradient step on the scalarized reward
+    \EndFor
+    \State $\theta_i \gets \theta$
+\EndFor
+\State \Return $\theta_n$
+\end{algorithmic}
+\end{algorithm}
+
+\section{Case Studies and Data}\label{sec:data}
+
+We anchor the evaluation on four cities chosen to span small/emerging to very large/mature metro networks (Table~\ref{tab:cities}), and to allow direct comparison against prior work: Xi'an was previously studied by \citet{michailidis2026}, enabling a direct numerical comparison; Chengdu is one of the largest metro networks in the world and is the home city of this journal's publishing institution; Hanoi and Ho Chi Minh City are, to our knowledge, not previously studied in the MNEP literature. Because MNEP RL methods are trained per city rather than pooled across a fixed benchmark set, the city set is not architecturally fixed at four -- we extend it with additional Asian cities (candidates: Beijing and Changsha, the two cities used by \citet{su2024}, if their released code/data prove usable) wherever open data can be confirmed, since a larger and more diverse city set strengthens both the transfer-learning claim and the scale-dependent generalization claim.
+
+\begin{table}[h]
+\caption{Case study cities, their role in the experimental design, and confirmed open-data status (see text for sources)}\label{tab:cities}
+\begin{tabular}{@{}llll@{}}
+\toprule
+City & Role & Scale (approx.) & Data status \\
+\midrule
+Hanoi & Novel, small/emerging metro & 2 lines + planned extensions & Network/boundaries strong; OD is proxy-only \\
+Ho Chi Minh City & Novel, medium/growing metro & 1 line (2024) + planned lines & Strongest of the four (CityScope OD+POI data) \\
+Xi'an & Direct benchmark vs.\ \citet{michailidis2026} & Medium, previously studied & OD grid likely reusable from prior code release \\
+Chengdu & Scale stress-test & $\sim$500+ km, world's largest & Network geometry available; ridership portal unconfirmed \\
+\botrule
+\end{tabular}
+\end{table}
+
+\subsection{Data sources per city}
+
+\textbf{Network topology and planned extensions.} Existing metro geometry for all four cities is obtainable from OpenStreetMap/Overpass; a structured multi-city shapefile source (station and line geometry, no ridership) covering Xi'an and Chengdu among 38 Chinese cities is available via a public GitHub dataset. Planned-extension maps exist as official planning diagrams for all four cities (Hanoi's 8-line master plan; Ho Chi Minh City's MAUR master plan; Xi'an's and Chengdu's Five-Year-Plan transport documents) but require manual digitization -- none is available as a ready-to-use shapefile.
+
+\textbf{OD demand.} Ho Chi Minh City has by far the strongest lead: the public \texttt{CityScope/CSL\_HCMC} repository (MIT Media Lab) ships shapefiles for landuse, buildings, road network, an actual OD matrix, POIs, and census microdata under 2021--2030 planning scenarios, and is the first data source to verify in detail. For Xi'an, \citet{michailidis2026}'s public code release claims to include the same 29$\times$29 1\,km$^2$-grid OD environment originally built from one month of GPS traces across 25 million mobile phones by the KDD~2020 paper that introduced it -- cloning that repository is the fastest path to a usable Xi'an OD dataset. For Hanoi and Chengdu (and as a fallback for the others), we construct a gravity-model demand proxy from WorldPop population-density rasters (1\,km resolution, all four countries covered, no registration required) and OpenStreetMap/Amap/Baidu POI density, calibrated against published ridership figures (e.g., Hanoi's Cat Linh--Ha Dong line: 13.68M riders in 2024; Ho Chi Minh City Line 1: 20.56M riders in 2025). Didi Chuxing's public GAIA taxi-trajectory dataset (Xi'an and Chengdu, Oct--Nov 2016) is an additional OD proxy source for the two Chinese cities.
+
+\textbf{Bus network (auxiliary signal only).} Each city's existing bus route network -- extractable from OpenStreetMap for all four cities -- is used solely as an auxiliary input to the rail expansion problem: it helps define a richer set of candidate expansion regions in cities where the rail network alone is too sparse (Hanoi, Ho Chi Minh City) and contributes an additional demand-proxy feature. Bus routes are never an output or design target of the method -- no structured open dataset with bus ridership was found for any of the four cities in any case.
+
+\textbf{Administrative boundaries / candidate regions.} GADM provides consistent district-level administrative boundaries for all four cities (Vietnam and China), usable directly to define MetroGNN-style candidate expansion regions.
+
+\textbf{Coordinate systems.} Chinese POI sources (Amap, Baidu) report coordinates in the obfuscated GCJ-02 system, which must be converted to WGS84 before merging with OSM/metro station coordinates; this conversion step is required for Xi'an and Chengdu but not for the OSM-only Vietnamese cities.
+
+%% TODO once the following papers are obtained from the user (currently paywalled, could not be fetched):
+%% - Wei, Mao, Zhao, Zou, An, "City Metro Network Expansion with Reinforcement Learning," KDD 2020
+%%   (origin of the Xi'an OD/grid environment reused by michailidis2026)
+%% - Confirm which city zhang2024 (Transportation Research Part C) uses as its case study
+%% TODO: clone github.com/dimichai/tabular-tndp and github.com/CityScope/CSL_HCMC and inspect
+%% actual data files before finalizing the per-city data pipeline.
+%% TODO: manually check data.chengdu.gov.cn for a metro passenger-flow open-data catalog entry.
+
+\section{Experiments and Results}\label{sec:experiments}
+
+\subsection{Baselines}
+
+We compare against re-implementations of the three MNEP reference methods: MetroGNN \citep{su2024} (single-objective GNN), the multi-objective actor-critic of \citet{zhang2024} (no GNN), and the tabular RL method of \citet{michailidis2026}.
+
+\subsection{Metrics}
+
+OD demand satisfied (\%); social equity (Gini/Theil index over station accessibility); radiation accessibility; training episodes to convergence; estimated CO$_2$ (following the carbon-accounting method of \citet{michailidis2026}); wall-clock GPU time.
+
+\subsection{Ablations}
+
+With/without cross-city transfer curriculum; with/without multi-objective reward (vs.\ demand-only); GNN state vs.\ flat/tabular state.
+
+\begin{table}[h]
+\caption{Results summary (placeholder -- to be populated once experiments are run)}\label{tab:results}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & Demand (\%) & Equity & Accessibility & Training episodes \\
+\midrule
+MetroGNN \citep{su2024} & -- & -- & -- & -- \\
+Multi-objective AC \citep{zhang2024} & -- & -- & -- & -- \\
+Tabular RL \citep{michailidis2026} & -- & -- & -- & -- \\
+Ours (full) & -- & -- & -- & -- \\
+\botrule
+\end{tabular}
+\end{table}
+
+\section{Discussion}\label{sec12}
+
+%% TODO: fill in once experiments are run. Planned discussion points:
+%% - scale-dependent guidance: at what network size does the GNN/multi-objective policy
+%%   outperform tabular RL by enough to justify its training cost, and does that threshold
+%%   match Michailidis et al.'s claim once tested on Chengdu-scale networks?
+%% - effect of the cross-city curriculum on final policy quality, not just training cost
+%%   (does transfer from a small network ever hurt a large network's final policy?)
+%% - effect of adding the bus network to the action space on demand/equity/accessibility,
+%%   isolated via ablation
+%% - limitations: reliance on demand proxies for cities without survey/smart-card data;
+%%   generalizability beyond the evaluated city set
+
+\section{Conclusion}\label{sec13}
+
+%% TODO: restate contributions and key findings once experiments are complete.
+
+\backmatter
+
+\bmhead{Acknowledgements}
+
+%% TODO: add acknowledgements if applicable.
+
+\section*{Declarations}
+
+\begin{itemize}
+\item \textbf{Funding}: Not applicable. (Publication costs for \textit{Railway Engineering Science} are covered by Southwest Jiaotong University; no external funding has been received for this work.)
+\item \textbf{Competing interests}: The author declares no competing interests.
+\item \textbf{Ethics approval and consent to participate}: Not applicable -- this study uses publicly available transit network, demographic, and demand-proxy data and does not involve human or animal subjects.
+\item \textbf{Consent for publication}: Not applicable.
+\item \textbf{Data availability}: %% TODO: finalize once the data pipeline (Section~\ref{sec:data}) is implemented; link derived/preprocessed datasets in the project repository where redistribution licenses permit.
+\item \textbf{Materials availability}: Not applicable.
+\item \textbf{Code availability}: Code will be made available at \url{https://github.com/vinhqdang/metro_expansion} upon publication.
+\item \textbf{Author contribution}: Q.-V.D. conceived the study, developed the method, and wrote the manuscript.
+\end{itemize}
+
+\begin{appendices}
+
+\section{Extended hyperparameters and training details}\label{secA1}
+
+%% TODO: populate once experiments are run (network architecture sizes, learning rates,
+%% Tchebycheff weight sampling scheme, replay buffer size, curriculum schedule per city,
+%% compute environment: conda py313, CUDA-enabled PyTorch, GPU used).
+
+\end{appendices}
+
+%%===========================================================================================%%
+%% If you are submitting to one of the Nature Portfolio journals, using the eJP submission   %%
+%% system, please include the references within the manuscript file itself. You may do this  %%
+%% by copying the reference list from your .bbl file, paste it into the main manuscript .tex %%
+%% file, and delete the associated \verb+\bibliography+ commands.                            %%
+%%===========================================================================================%%
+
+\bibliography{references}% common bib file
+%% if required, the content of .bbl file can be included here once bbl is generated
+%%\input sn-article.bbl
+
+\end{document}

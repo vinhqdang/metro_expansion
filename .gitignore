@@ -216,3 +216,26 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bbl-SAVE-ERROR
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+*.out
+*.log
+*.xdv
+*.run.xml
+main.pdf
+manuscript/pdflatex_run*.log
+manuscript/bibtex_run*.log
+external/
+
+# Reference PDFs (personal copies, some paywalled -- do not redistribute)
+/1-s2.0-*.pdf
+/2403.09197v1.pdf
+/2606.04167v1.pdf
