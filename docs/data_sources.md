@@ -19,7 +19,7 @@ This supersedes the "likely reusable" / unverified claims in the manuscript's Ca
 
 **Confirmed available and usable now -- the strongest data source of all four cities.** `Data/GIS/` contains real shapefiles (not proxies):
 - `Metro/Metro_shapefile/`: MetroRoute.shp + Station.shp (routes and stations).
-- `Bus/Bus_shapefile/`: BusRoute.shp + BusStop.shp (existing bus network -- our auxiliary signal source).
+- `Bus/Bus_shapefile/`: BusRoute.shp + BusStop.shp (existing bus network -- our auxiliary signal source). **Coverage caveat:** the 189 stops in `BusStop.shp` fall entirely within a small downtown/pilot-study area, giving nonzero bus-derived signal for only ~32 of the city's 322 candidate zones (~10%) when run through `src/data/hcmc.py`'s `build_bus_stop_density_feature` -- confirmed by running `scripts/smoke_test_hcmc.py`. Full-city coverage will need the OpenStreetMap fallback or a wider bus dataset.
 - `OD_2018/OD_shapefile/`: `Survey_OD.shp`, a real 2018 household travel survey OD dataset.
 - `Population/`: district- and ward-level population shapefiles (`population_HCMC/`) plus a separate `population_model_area/` covering the CityScope project's focus area.
 - `POI/`: two POI shapefile sets (`POI_model_area/`, `POI_simulation_area/`).
