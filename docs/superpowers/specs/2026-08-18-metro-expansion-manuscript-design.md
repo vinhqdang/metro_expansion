@@ -1,7 +1,16 @@
 # Design: Fair and Transferable Graph RL for Metro Network Expansion
 
 **Target venue:** *Railway Engineering Science* (Springer / Southwest Jiaotong University, open access, no APC)
-**Status:** Approved for planning (2026-08-18)
+**Status:** Approved for planning (2026-08-18); scope amended same day (see §9)
+
+## 9. Amendment (2026-08-18, later same day): scope correction
+
+After initial approval, two scope adjustments were made in response to user feedback:
+
+1. **Bus network is an auxiliary signal only, never part of the action space.** The initial approved design considered broadening the action space to include bus-route additions alongside metro extensions (to compensate for Hanoi/HCMC's very sparse metro networks). The user flagged this as a real risk: *Railway Engineering Science*'s scope is explicitly rail transit (high-speed/heavy-haul/urban rail/maglev/hyperloop) and does not cover general bus/public-transport network design, so a method whose contribution is partly about bus-route decisions risks being out of scope or desk-rejected. **Correction:** the policy's action space, objectives, and the resulting network design remain rail-only (metro/tram/light-rail extensions) throughout. Each city's existing bus network is used only as an auxiliary *input* -- to help define a richer set of candidate expansion regions and as an additional travel-demand proxy signal in cities where the rail network alone is too sparse for either purpose -- never as something the policy designs or evaluates. Kang et al. (Omega 2019) is correspondingly related work/motivation only, not a methodological component.
+2. **Rail scope includes tram/light-rail, not metro alone**, matching the journal's own "urban rail transit" framing, and the case-study city set is explicitly open-ended rather than fixed at exactly four -- additional Asian cities (e.g., Beijing/Changsha, MetroGNN's original cities) may be added if their open data proves usable, since "the chance to have [usable] data is larger" with a broader candidate set. Title changed accordingly: *"Fair and Transferable Graph Reinforcement Learning for Urban Rail Transit Network Expansion Across Asian Cities."*
+
+These corrections are reflected in `manuscript/main.tex` (already updated) but not yet fully propagated below (§1-§8 still describe the original four-city, bus-inclusive framing in places) -- treat §9 as authoritative where the two disagree.
 
 ## 1. Background & Gap
 
