@@ -158,7 +158,23 @@ Three papers have applied this idea specifically to metro network expansion, and
 
 \citet{michailidis2026} bet against both of the preceding papers' machinery. They reformulate MNEP as a Non-Markovian Reward Decision Process, a reformulation that shrinks the effective state-action space enough that a tabular Monte Carlo RL method -- a plain lookup-table policy, no neural network, no GPU -- with fairness-based reward functions matches deep RL performance while using 18$\times$ fewer training episodes and producing an estimated 12$\times$ less CO$_2$ over the training run. This is a pointed and well-evidenced critique of the field's default assumption that more representational capacity is always worth its computational cost, and it is evaluated carefully -- but only on Xi'an and Amsterdam, both mid-sized, data-rich, already-mature metro systems whose state-action spaces, however large in absolute terms, may not be representative of either extreme this paper is concerned with: the enormous scale of the world's largest metro networks, or the acute data sparsity of metro systems still in their first decade of operation.
 
-Read together, these three papers span the design space's most important axes -- spatial representation, multi-objective fairness, computational efficiency -- without any single paper occupying more than one axis at a time, and none reports a result outside a small set of already-mature systems. That gap in \emph{scale coverage}, as much as any single missing feature, is what motivates the case-study selection in Section~\ref{sec:data}.
+Read together, these three papers span the design space's most important axes -- spatial representation, multi-objective fairness, computational efficiency -- without any single paper occupying more than one axis at a time, and none reports a result outside a small set of already-mature systems. Table~\ref{tab:related-comparison} summarizes this gap directly.
+
+\begin{table}[h]
+\caption{MNEP reinforcement-learning methods compared along the axes this paper addresses jointly. ``Cities tested'' lists only the cities each paper's own published evaluation covers.}\label{tab:related-comparison}
+\begin{tabularx}{\textwidth}{@{}X ccc X@{}}
+\toprule
+Method & GNN state & Multi-objective & Cross-city transfer & Cities tested \\
+\midrule
+MetroGNN \citep{su2024} & Yes & No (demand only) & No & Beijing, Changsha \\
+Zhang et al. \citep{zhang2024} & No & Yes & No & Xi'an \\
+Tabular RL \citep{michailidis2026} & No & Yes & No & Xi'an, Amsterdam \\
+This paper & Yes & Yes & Designed, not yet measured & Xi'an (reported); Hanoi, Ho Chi Minh City, Chengdu (in progress) \\
+\botrule
+\end{tabularx}
+\end{table}
+
+That gap in \emph{scale coverage}, as much as any single missing feature, is what motivates the case-study selection in Section~\ref{sec:data}, and Table~\ref{tab:related-comparison}'s honestly incomplete final column -- three of four planned cities still in progress -- is itself a deliberate choice: we would rather show the comparison with its actual current state visible than round it up to a completeness this paper has not yet earned.
 
 \subsection{Related operational-phase work on rail-bus coordination}
 
@@ -404,7 +420,11 @@ None of these limitations, we think, undermine the paper's central methodologica
 
 Metro network expansion is a decision cities get to make only rarely and can essentially never undo, which makes the case for bringing more rigorous, quantitative methods to it -- and for being honest about exactly what those methods have and have not yet demonstrated -- unusually strong. This paper proposed a GNN-based, multi-objective actor-critic policy for the Metro Network Expansion Problem that combines spatial representation learning \citep{su2024}, fairness-aware multi-objective reward decomposition \citep{zhang2024}, and a direct, architectural response to the training-efficiency critique raised by \citet{michailidis2026}, together with a rail-only scope discipline that lets the method extend, for the first time in this literature, to small and data-sparse emerging metro systems by treating each city's existing bus network as an auxiliary input signal rather than an additional design target.
 
-We reported a first, fully real, GPU-trained experimental result on Xi'an: our full method outperforms both of its own ablations on every metric measured, and a direct behavioral sanity check confirms the weight-conditioning mechanism that makes ``one policy, many trade-offs'' true rather than aspirational -- but only after we caught and fixed a bug that had silently made it false in an earlier, otherwise-unremarkable-looking training run, a finding we report in detail because we believe it generalizes to other implementations of weight-conditioned multi-objective RL. On the narrower question of raw demand satisfaction under a matched, modest training budget, the tabular RL baseline of \citet{michailidis2026} outperforms our method on Xi'an, a result we report plainly rather than obscure, and read as consistent with rather than contradicting their central claim at this network's scale -- which is exactly why the scale-dependent comparison at Chengdu, and the cross-city curriculum linking Xi'an's trained weights to a second city, are the two most important next steps in this research programme, not afterthoughts to it. The infrastructure for both -- data pipelines, GNN encoder, multi-objective policy, and training loop -- already exists, is tested, and is described in full in this paper and its accompanying repository; what remains is running it, and we intend to.
+We reported a first, fully real, GPU-trained experimental result on Xi'an, across three seeds per method: our full method's mean exceeds both of its own ablations on equity and coverage -- the most suggestive finding in the paper -- though not distinguishably on raw demand, given how much three-seed variance this small, high-variance training regime produces; and a direct behavioral sanity check confirms the weight-conditioning mechanism that makes ``one policy, many trade-offs'' true rather than aspirational, but only after we caught and fixed a bug that had silently made it false in an earlier, otherwise-unremarkable-looking training run, a finding we report in detail because we believe it generalizes to other implementations of weight-conditioned multi-objective RL. On the narrower question of raw demand satisfaction under a matched, modest training budget, the tabular RL baseline of \citet{michailidis2026} outperforms all three of our variants on Xi'an, corroborated by a second, independent line of evidence from real measured training-cost data (Section~\ref{sec:experiments-carbon}) -- a result we report plainly rather than obscure, and read as consistent with rather than contradicting their central claim at this network's scale.
+
+\subsection*{Future work}
+
+That reading generates a concrete, near-term roadmap rather than an open-ended one, and we state it explicitly rather than leave it implicit. First, and most immediately: widen the seed sweep for all three of our Xi'an variants from three to at least five, matching the tabular baseline, to determine whether the equity and coverage advantages reported above survive additional seeds or shrink toward statistical noise the way the demand comparison already has. Second: run the same full method, unmodified, on Chengdu -- the single experiment this paper's central scale-dependent hypothesis most directly hinges on, and the one most likely to either vindicate or meaningfully qualify \citeauthor{michailidis2026}'s efficiency claim outside the mid-sized regime it has so far been tested in. Third: complete the cross-city curriculum (Algorithm~\ref{alg:curriculum}) by training a second city -- Ho Chi Minh City, whose data pipeline (Section~\ref{sec:data}) is already built and tested -- initialized from Xi'an's trained weights, to measure directly whether transfer reduces training episodes, wall-clock time, and (with \texttt{codecarbon} instrumentation added to our own runs, unlike the current Xi'an-only result) carbon footprint relative to training from scratch, which is the paper's actual answer to \citeauthor{michailidis2026}'s critique rather than an assertion. Fourth: replace the coverage proxy (Eq.~\ref{eq:coverage}) with \citeauthor{zhang2024}'s radiation-model accessibility measure \citep{simini2012}, closing the one metric-level gap between what this paper measures and what Section~\ref{sec:problem} originally specified. None of these four steps requires a new architecture or a new formulation -- the method, the code, and the data pipelines described in this paper already support all four; what remains is running them, and we intend to.
 
 \backmatter
 
@@ -488,6 +508,35 @@ Random seeds & 1, 2, 3, 7, 42 \\
 \end{table}
 
 We use the baseline's own default hyperparameters throughout rather than tuning them in our favor or against it; the only values we set explicitly are \texttt{nr\_stations} and \texttt{train\_episodes}, matched to our own method's budget for a fair training-cost comparison. \texttt{docs/baseline\_reproduction.md} in the project repository records the exact commands, environment setup, and a real upstream bug found and patched in the baseline's own evaluation code (Section~\ref{sec:experiments}) needed to reproduce these numbers.
+
+\section{Notation summary}\label{secA2}
+
+\begin{table}[h]
+\caption{Summary of notation used in Sections~\ref{sec:problem}--\ref{sec:method}}\label{tab:notation}
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\mathcal{N} = \{n_1, \dots, n_k\}$ & Set of candidate regions (Section~\ref{sec:data}) \\
+$M_t = (V_t, E_t)$ & Rail network at step $t$: selected stations $V_t \subseteq \mathcal{N}$, line segments $E_t$ \\
+$S_t = (M_t, b_t)$ & State: partial network and remaining construction budget \\
+$A_t$ & Action: the candidate region added at step $t$ \\
+$\mathcal{A}(S_t)$ & Feasibility mask: legal actions at state $S_t$ \\
+$C^{\text{demand}}, C^{\text{equity}}, C^{\text{access}}$ & Cumulative, bounded network-level objectives $\in [0,1]$ \\
+$\mathbf{C}(M_t)$ & Vector of the three objectives at step $t$ \\
+$\mathbf{w}$ & Tchebycheff weight vector, sampled from the probability simplex each episode \\
+$\mathbf{z}^* = (1,1,1)$ & Tchebycheff ideal point \\
+$g(\cdot \mid \mathbf{w}, \mathbf{z}^*)$ & Augmented Tchebycheff scalarization (Eq.~\ref{eq:tchebycheff}) \\
+$r_t$ & Scalarized per-step RL reward (Eq.~\ref{eq:marginal-reward}) \\
+$\mathbf{a}_i$ & Raw feature vector of candidate region $n_i$ \\
+$\mathbf{h}_i^{(l)}$ & Node $n_i$'s embedding after $l$ GNN message-passing layers \\
+$e^s_{ij}, e^o_{ij}$ & Spatial-contiguity and OD-flow edge weights between $n_i, n_j$ \\
+$\mathbf{q}_t, \mathbf{q}_t'$ & Pooled network-state query, and its weight-conditioned form \\
+$\pi_\theta, V_\phi$ & Policy and value-function networks \\
+$G_t, \hat{A}_t$ & Monte Carlo return-to-go and normalized advantage at step $t$ \\
+\botrule
+\end{tabularx}
+\end{table}
 
 \end{appendices}
 
