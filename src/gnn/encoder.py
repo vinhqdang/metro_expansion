@@ -96,3 +96,29 @@ class HeteroGNNEncoder(nn.Module):
         for layer in self.layers:
             h = layer(h, spatial_edge_index, spatial_edge_weight, od_edge_index, od_edge_weight)
         return h
+
+
+class FlatEncoder(nn.Module):
+    """Non-graph baseline encoder: a linear projection of raw node features
+    with no message passing over spatial or OD-flow edges.
+
+    Used as the "flat/tabular state" ablation (manuscript Section 6.3),
+    approximating a non-GNN policy such as \\citet{zhang2024}'s. Accepts the
+    same edge arguments as HeteroGNNEncoder.forward for interface
+    compatibility, but ignores them entirely.
+    """
+
+    def __init__(self, in_dim: int, hidden_dim: int, num_layers: int = 2) -> None:
+        super().__init__()
+        self.input_proj = nn.Linear(in_dim, hidden_dim, bias=False)
+        self.activation = nn.Tanh()
+
+    def forward(
+        self,
+        node_features: Tensor,
+        spatial_edge_index: Tensor,
+        spatial_edge_weight: Tensor,
+        od_edge_index: Tensor,
+        od_edge_weight: Tensor,
+    ) -> Tensor:
+        return self.activation(self.input_proj(node_features))

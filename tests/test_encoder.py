@@ -1,6 +1,6 @@
 import torch
 
-from src.gnn.encoder import HeteroGNNEncoder, RelationalMessagePassingLayer
+from src.gnn.encoder import FlatEncoder, HeteroGNNEncoder, RelationalMessagePassingLayer
 
 
 def make_toy_graph(num_nodes=6, in_dim=4, seed=0):
@@ -99,3 +99,25 @@ def test_encoder_runs_on_cuda_if_available():
     )
     assert out.device.type == "cuda"
     assert torch.isfinite(out).all()
+
+
+def test_flat_encoder_ignores_edges_entirely():
+    node_features, spatial_ei, spatial_ew, od_ei, od_ew = make_toy_graph(in_dim=4)
+    encoder = FlatEncoder(in_dim=4, hidden_dim=8)
+    out_with_edges = encoder(node_features, spatial_ei, spatial_ew, od_ei, od_ew)
+
+    empty_ei = torch.empty((2, 0), dtype=torch.long)
+    empty_ew = torch.empty((0,))
+    out_without_edges = encoder(node_features, empty_ei, empty_ew, empty_ei, empty_ew)
+
+    assert out_with_edges.shape == (6, 8)
+    assert torch.allclose(out_with_edges, out_without_edges)
+
+
+def test_flat_encoder_gradients_flow():
+    node_features, spatial_ei, spatial_ew, od_ei, od_ew = make_toy_graph(in_dim=4)
+    encoder = FlatEncoder(in_dim=4, hidden_dim=8)
+    out = encoder(node_features, spatial_ei, spatial_ew, od_ei, od_ew)
+    out.sum().backward()
+    assert encoder.input_proj.weight.grad is not None
+    assert torch.isfinite(encoder.input_proj.weight.grad).all()
