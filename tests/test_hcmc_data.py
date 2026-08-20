@@ -12,6 +12,8 @@ from src.data.hcmc import (
     build_contiguity_edges,
     build_node_features,
     build_od_edges,
+    build_radiation_probabilities,
+    radiation_accessibility_score,
 )
 
 
@@ -158,6 +160,70 @@ def test_build_od_edges_matches_district_names_despite_spacing_difference():
     assert edge_index.shape[1] > 0  # previously this silently produced zero edges
     src_zones = set(edge_index[0].tolist())
     assert 0 in src_zones  # zone 0 ("Binh Tan") is correctly matched as an origin
+
+
+def make_line_zones() -> gpd.GeoDataFrame:
+    """Three zones on a line, A(0,0)-B(1,0)-C(3,0), with distinct pairwise
+    distances (no ties) so the radiation model's intervening-population
+    term s_ij is unambiguous to hand-verify."""
+    geoms = [Point(0, 0).buffer(0.1), Point(1, 0).buffer(0.1), Point(3, 0).buffer(0.1)]
+    return gpd.GeoDataFrame(
+        {
+            "Pop_2019": [100.0, 200.0, 50.0],
+            "x_centroid": [0.0, 1.0, 3.0],
+            "y_centroid": [0.0, 0.0, 0.0],
+            "geometry": geoms,
+        },
+        crs="EPSG:4326",
+    )
+
+
+def test_build_radiation_probabilities_matches_hand_computed_values():
+    zones = make_line_zones()
+    p = build_radiation_probabilities(zones)
+
+    assert p.shape == (3, 3)
+    assert np.all(p >= 0.0) and np.all(p <= 1.0)
+    assert np.all(np.diag(p) == 0.0)  # self-flow excluded
+
+    # A -> B: nothing lies strictly between them, s_AB = 0.
+    assert p[0, 1] == pytest.approx((100 * 200) / ((100 + 0) * (100 + 200 + 0)))
+    # A -> C: B (pop 200) lies strictly between, s_AC = 200.
+    assert p[0, 2] == pytest.approx((100 * 50) / ((100 + 200) * (100 + 50 + 200)))
+    # B -> A: nothing lies strictly between them, s_BA = 0.
+    assert p[1, 0] == pytest.approx((200 * 100) / ((200 + 0) * (200 + 100 + 0)))
+    # B -> C: A (pop 100) is closer to B (distance 1) than C is (distance 2), so it lies strictly
+    # between them, s_BC = 100.
+    assert p[1, 2] == pytest.approx((200 * 50) / ((200 + 100) * (200 + 50 + 100)))
+    # C -> B: nothing lies strictly between them, s_CB = 0.
+    assert p[2, 1] == pytest.approx((50 * 200) / ((50 + 0) * (50 + 200 + 0)))
+    # C -> A: B (pop 200) lies strictly between, s_CA = 200.
+    assert p[2, 0] == pytest.approx((50 * 100) / ((50 + 200) * (50 + 100 + 200)))
+
+
+def test_build_radiation_probabilities_asymmetric():
+    # The radiation model is not symmetric: p_ij != p_ji in general, since
+    # the normalization depends on the ORIGIN's own population.
+    zones = make_line_zones()
+    p = build_radiation_probabilities(zones)
+    assert p[0, 1] != pytest.approx(p[1, 0])
+
+
+def test_radiation_accessibility_score_bounded_and_monotonic_in_stations():
+    zones = make_line_zones()
+    p = build_radiation_probabilities(zones)
+
+    empty_score = radiation_accessibility_score(p, [])
+    assert empty_score == 0.0
+
+    one_station_score = radiation_accessibility_score(p, [1])
+    all_stations_score = radiation_accessibility_score(p, [0, 1, 2])
+
+    assert 0.0 <= one_station_score <= 1.0
+    assert 0.0 <= all_stations_score <= 1.0
+    # Adding more built stations can only raise (never lower) each region's
+    # best-connection probability, so the aggregate score is monotonic.
+    assert all_stations_score >= one_station_score
 
 
 def test_build_od_edges_logs_warning_for_unmatched_rows_but_keeps_matched_ones(caplog):

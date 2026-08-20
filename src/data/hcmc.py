@@ -190,3 +190,66 @@ def build_od_edges(
     # comparable in absolute terms across different cities' OD surveys.
     edge_weight = edge_weight / edge_weight.max()
     return edge_index, edge_weight
+
+
+def build_radiation_probabilities(zones: gpd.GeoDataFrame) -> np.ndarray:
+    """Compute the classical radiation-model flow-probability matrix
+    (Simini et al. 2012, 10.1038/nature10856) from each zone's real 2019
+    population (`Pop_2019`) and its real projected centroid coordinates
+    (`x_centroid`, `y_centroid`, meters).
+
+    p[i, j] = m_i * n_j / ((m_i + s_ij) * (m_i + n_j + s_ij))
+
+    where m_i, n_j are the origin/destination zones' populations and s_ij
+    is the total population of all zones strictly closer to i than j is
+    (the radiation model's "intervening opportunities" term), excluding i
+    and j themselves. Every p[i, j] lies in [0, 1] by construction (m_i,
+    n_j > 0 and the denominator dominates the numerator by the AM-GM-style
+    argument used in the original paper), so this is directly usable as a
+    bounded accessibility weight, not merely a relative score.
+
+    This is tractable for Ho Chi Minh City specifically because real
+    population counts and real geographic coordinates exist here, unlike
+    Xi'an's abstract, unreferenced benchmark grid -- see the manuscript's
+    Discussion/Limitations for why the two cities are treated differently
+    on this metric rather than forcing a uniform (but partly fabricated)
+    treatment across both.
+    """
+    pop = zones["Pop_2019"].fillna(0.0).to_numpy(dtype=np.float64)
+    xy = zones[["x_centroid", "y_centroid"]].to_numpy(dtype=np.float64)
+    n = len(zones)
+
+    dist = np.sqrt(((xy[:, None, :] - xy[None, :, :]) ** 2).sum(axis=-1))
+
+    p = np.zeros((n, n), dtype=np.float64)
+    for i in range(n):
+        order = np.argsort(dist[i])
+        sorted_pop = pop[order]
+        cumulative_before = np.cumsum(sorted_pop) - sorted_pop
+        s_at_rank = np.empty(n)
+        s_at_rank[order] = cumulative_before
+        s_i = np.maximum(s_at_rank - pop[i], 0.0)
+        denom = (pop[i] + s_i) * (pop[i] + pop + s_i)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            row = np.where(denom > 0, (pop[i] * pop) / denom, 0.0)
+        row[i] = 0.0
+        p[i] = row
+    return p
+
+
+def radiation_accessibility_score(p: np.ndarray, station_indices: list[int]) -> float:
+    """Bounded [0, 1] accessibility score for a built network: for each
+    candidate region, the radiation model's flow probability to its
+    single best-connected built station (Eq. `p` from
+    `build_radiation_probabilities`), averaged over all regions.
+
+    This is the radiation-model analogue of this paper's Chebyshev
+    coverage proxy (Eq. 4 in the manuscript): both take a
+    closest-built-station form, but this one weights "closeness" by a
+    continuous, population-informed flow probability instead of a hard
+    within-K-hops indicator.
+    """
+    if not station_indices:
+        return 0.0
+    best = p[:, station_indices].max(axis=1)
+    return float(best.mean())
