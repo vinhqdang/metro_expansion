@@ -41,13 +41,21 @@ only the GNN's hidden-layer and policy weights transfer, not input_proj).
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import time
 from collections import defaultdict, deque
 from pathlib import Path
 
+# Must be set before any CUDA context is created (i.e. before `import torch`)
+# for torch.use_deterministic_algorithms(True) below to fully cover cuBLAS
+# ops; see the manuscript's reproducibility finding (Section: Experiments).
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import numpy as np
 import torch
+
+torch.use_deterministic_algorithms(True)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))

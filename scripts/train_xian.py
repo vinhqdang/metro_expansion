@@ -52,12 +52,20 @@ MULTIPLE cities, which this run doesn't yet have.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import time
 from pathlib import Path
 
+# Must be set before any CUDA context is created (i.e. before `import torch`)
+# for torch.use_deterministic_algorithms(True) below to fully cover cuBLAS
+# ops; see the manuscript's reproducibility finding (Section: Experiments).
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import numpy as np
 import torch
+
+torch.use_deterministic_algorithms(True)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -283,6 +291,14 @@ def main():
         od_type="pct",
         chained_reward=False,
     )
+    # Gymnasium only reseeds env.np_random when reset(seed=...) is given a
+    # non-None seed; every other reset() call in the training loop below
+    # passes none, so without this one explicit seed the environment's
+    # own internal RNG (starting-cell choice) is drawn from OS entropy and
+    # differs across process launches, a second, independent source of the
+    # run-to-run non-determinism this paper's reproducibility finding
+    # documents (Section: Experiments) alongside the GNN scatter reduction.
+    env.reset(seed=args.seed)
 
     graph = build_graph(city, device)
     in_dim = graph[0].shape[1]
