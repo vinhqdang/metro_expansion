@@ -264,6 +264,7 @@ def main():
             "flat_encoder = FlatEncoder + multi-objective, approximates Zhang et al. (zhang2024)"
         ),
     )
+    parser.add_argument("--save_checkpoint", type=str, default=None, help="Path to save trained weights (for cross-city transfer, e.g. scripts/train_hcmc.py --init_from_xian)")
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
@@ -335,6 +336,13 @@ def main():
 
     elapsed = time.time() - t0
     print(f"\ntraining done in {elapsed:.1f}s")
+
+    if args.save_checkpoint:
+        ckpt = {"policy": policy.state_dict(), "weight_embed": weight_embed.state_dict()}
+        if hasattr(encoder, "layers"):
+            ckpt["encoder_layers"] = encoder.layers.state_dict()
+        torch.save(ckpt, args.save_checkpoint)
+        print(f"saved checkpoint to {args.save_checkpoint}")
 
     # Final evaluation: greedy rollout (argmax action) under several
     # different weight vectors, from the SAME trained model, to directly
