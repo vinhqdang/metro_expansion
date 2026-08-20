@@ -9,14 +9,19 @@ against the real CSL_HCMC geography. No fabricated station placements.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 import numpy as np
 import torch
+
+torch.use_deterministic_algorithms(True)
 
 from src.data.hcmc import load_zones
 from src.gnn.encoder import HeteroGNNEncoder
@@ -34,11 +39,13 @@ def main():
     policy = AttentivePolicyValueHead(embed_dim=32).to(device)
     weight_embed = torch.nn.Linear(3, 32, bias=False).to(device)
 
-    ckpt_path = Path.home() / "AppData" / "Local" / "Temp" / "hcmc_ckpts" / "full_seed42.pt"
+    ckpt_path = Path.home() / "AppData" / "Local" / "Temp" / "hcmc_ckpts_v2" / "full_seed42.pt"
     ckpt = torch.load(ckpt_path, map_location=device, weights_only=True)
     policy.load_state_dict(ckpt["policy"])
     weight_embed.load_state_dict(ckpt["weight_embed"])
     encoder.layers.load_state_dict(ckpt["encoder_layers"])
+    if "encoder_input_proj" in ckpt:
+        encoder.input_proj.load_state_dict(ckpt["encoder_input_proj"])
     encoder.eval()
     policy.eval()
 

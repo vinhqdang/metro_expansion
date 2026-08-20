@@ -267,8 +267,8 @@ def fig_radiation_vs_coverage():
     labels = ["single_objective", "flat_encoder", "full"]
     coverage = [0.230, 0.222, 0.247]
     coverage_err = [0.014, 0.038, 0.032]
-    radiation = [0.0376, 0.0367, 0.0371]
-    radiation_err = [0.0016, 0.0008, 0.0022]
+    radiation = [0.0348, 0.0417, 0.0385]
+    radiation_err = [0.0034, 0.0064, 0.0023]
 
     fig, axes = plt.subplots(1, 2, figsize=(8.5, 3.8))
 

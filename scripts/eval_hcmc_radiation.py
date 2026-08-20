@@ -98,6 +98,8 @@ def main():
     weight_embed.load_state_dict(ckpt["weight_embed"])
     if "encoder_layers" in ckpt and hasattr(encoder, "layers"):
         encoder.layers.load_state_dict(ckpt["encoder_layers"])
+    if "encoder_input_proj" in ckpt and hasattr(encoder, "input_proj"):
+        encoder.input_proj.load_state_dict(ckpt["encoder_input_proj"])
     encoder.eval()
     policy.eval()
 

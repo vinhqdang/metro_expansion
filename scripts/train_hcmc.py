@@ -349,6 +349,15 @@ def main():
         ckpt = {"policy": policy.state_dict(), "weight_embed": weight_embed.state_dict()}
         if hasattr(encoder, "layers"):
             ckpt["encoder_layers"] = encoder.layers.state_dict()
+        # Also save the input projection, in addition to the message-passing
+        # layers above: it is only safe to reuse across cities with matching
+        # input feature dimensionality (which --init_from_xian's loading path
+        # deliberately does not assume and never reads this key for), but a
+        # same-city post-hoc evaluation (scripts/eval_hcmc_radiation.py,
+        # scripts/make_hcmc_map_data.py) needs it to actually reconstruct the
+        # trained model rather than a message-passing-layers-only partial one.
+        if hasattr(encoder, "input_proj"):
+            ckpt["encoder_input_proj"] = encoder.input_proj.state_dict()
         torch.save(ckpt, args.save_checkpoint)
         print(f"saved checkpoint to {args.save_checkpoint}")
 
