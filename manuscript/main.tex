@@ -1,45 +1,9 @@
-%Version 3.1 December 2024
-% See section 11 of the User Manual for version history
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                                                 %%
-%% Please do not use \input{...} to include other tex files.       %%
-%% Submit your LaTeX manuscript as one .tex document.              %%
-%%                                                                 %%
-%% All additional figures and files should be attached             %%
-%% separately and not embedded in the \TeX\ document itself.       %%
-%%                                                                 %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Computational Economics (Springer) template: svjour3 class, spbasic (author-year)
+% bibliography style. Converted from the Springer Nature sn-jnl/Vancouver-numbered
+% template used for the earlier Railway Engineering Science submission.
 
-%%\documentclass[referee,sn-basic]{sn-jnl}% referee option is meant for double line spacing
-
-%%=======================================================%%
-%% to print line numbers in the margin use lineno option %%
-%%=======================================================%%
-
-%%\documentclass[lineno,pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
-
-%%=========================================================================================%%
-%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
-%%=========================================================================================%%
-
-%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
-
-%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove �Numbered� in the optional parenthesis. 
-%%The option is available for: sn-basic.bst, sn-chicago.bst%  
- 
-%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
-%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
-%%\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
-%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
-%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
-\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style — matches Railway Engineering Science's numbered [n] citation style
-%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
-%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
-%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
-
-%%%% Standard Packages
-%%<additional latex packages if required can be included here>
+\documentclass{svjour3}
+\smartqed
 
 \usepackage{graphicx}%
 \usepackage{multirow}%
@@ -56,69 +20,47 @@
 \usepackage{algpseudocode}%
 \usepackage{listings}%
 \usepackage{tabularx}%
+\usepackage{natbib}%
+\usepackage{microtype}%
+\usepackage{url}%
 %%%%
 
-%%%%%=============================================================================%%%%
-%%%%  Remarks: This template is provided to aid authors with the preparation
-%%%%  of original research articles intended for submission to journals published 
-%%%%  by Springer Nature. The guidance has been prepared in partnership with 
-%%%%  production teams to conform to Springer Nature technical requirements. 
-%%%%  Editorial and presentation requirements differ among journal portfolios and 
-%%%%  research disciplines. You may find sections in this template are irrelevant 
-%%%%  to your work and are empowered to omit any such section if allowed by the 
-%%%%  journal you intend to submit to. The submission guidelines and policies 
-%%%%  of the journal take precedence. A detailed User Manual is available in the 
-%%%%  template package for technical guidance.
-%%%%%=============================================================================%%%%
+\journalname{Computational Economics}
 
 %% as per the requirement new theorem styles can be included as shown below
-\theoremstyle{thmstyleone}%
+\theoremstyle{plain}%
 \newtheorem{theorem}{Theorem}%  meant for continuous numbers
-%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
-%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
-\newtheorem{proposition}[theorem]{Proposition}% 
-%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+\newtheorem{proposition}[theorem]{Proposition}%
 
-\theoremstyle{thmstyletwo}%
+\theoremstyle{remark}%
 \newtheorem{example}{Example}%
 \newtheorem{remark}{Remark}%
 
-\theoremstyle{thmstylethree}%
+\theoremstyle{definition}%
 \newtheorem{definition}{Definition}%
 
 \raggedbottom
-%%\unnumbered% uncomment this for unnumbered level heads
+\sloppy
 
 \begin{document}
 
-\title[Fair and Transferable Graph RL for Rail Transit Expansion]{Fair and Transferable Graph Reinforcement Learning for Urban Rail Transit Network Expansion Across Asian Cities}
+\title{Fair and Transferable Graph Reinforcement Learning for Urban Rail Transit Network Expansion Across Asian Cities}
+\titlerunning{Fair and Transferable Graph RL for Rail Transit Expansion}
 
-%%=============================================================%%
-%% GivenName	-> \fnm{Joergen W.}
-%% Particle	-> \spfx{van der} -> surname prefix
-%% FamilyName	-> \sur{Ploeg}
-%% Suffix	-> \sfx{IV}
-%% \author*[1,2]{\fnm{Joergen W.} \spfx{van der} \sur{Ploeg} 
-%%  \sfx{IV}}\email{iauthor@gmail.com}
-%%=============================================================%%
+\author{Quang-Vinh Dang}
 
-\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+\institute{Q.-V. Dang \at
+  British University Vietnam, Hung Yen, Vietnam \\
+  \email{vinh.dq4@buv.edu.vn}}
 
-\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
-
-%%==================================%%
-%% Sample for unstructured abstract %%
-%%==================================%%
-
-\abstract{The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work shows GNN encoders improve demand satisfaction, multi-objective decomposition balances equity against demand, and tabular RL matches deep RL cheaply, but no method combines all three, and none has been tested from small emerging systems to the world's largest networks. We propose a GNN-based, multi-objective actor-critic policy for rail transit expansion, scalarized via Tchebycheff decomposition and made sample-efficient via cross-city curriculum transfer; each city's bus network is used only as an auxiliary signal, never as an action. We evaluate on Xi'an's regular grid and Ho Chi Minh City's irregular polygon network, with Hanoi and Chengdu as ongoing work. The weight-conditioning mechanism confirms, after fixing a bug that had silently masked it, that one trained policy varies behavior across trade-offs, but a five-seed Xi'an sweep finds no reliable architectural advantage among the full method and its ablations; repeated reruns reveal GPU training non-determinism severe enough to reverse an equity finding an earlier draft reported, traced to two distinct causes (non-deterministic scatter reduction and an unseeded environment reset) and fixed and verified, though not yet used to regenerate this paper's own tables, and the tabular RL baseline still outperforms ours on raw demand. On Ho Chi Minh City, an encoder ablation collapses to near-zero demand where the full method does not; warm-starting from Xi'an's trained policy shows genuine positive transfer at initialization and, under a reduced training budget, reaches non-trivial demand and consistently higher coverage than training from scratch -- direct evidence for the curriculum's sample-efficiency claim. Implementing the true radiation-model accessibility measure where real population data makes it computable finds it does not share the coverage proxy's architectural sensitivity, a construct-validity finding we report rather than smooth over.}
-
-\keywords{metro network expansion, reinforcement learning, graph neural networks, multi-objective optimization, social equity, transfer learning}
-
-%%\pacs[JEL Classification]{D8, H51}
-
-%%\pacs[MSC Classification]{35A01, 65L10, 65L12, 65L20, 65L70}
+\date{Received: \today}
 
 \maketitle
+
+\begin{abstract}
+The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work shows GNN encoders improve demand satisfaction, multi-objective decomposition balances equity against demand, and tabular RL matches deep RL cheaply, but no method combines all three, and none has been tested from small emerging systems to the world's largest networks. We propose a GNN-based, multi-objective actor-critic policy for rail transit expansion, scalarized via Tchebycheff decomposition and made sample-efficient via cross-city curriculum transfer; each city's bus network is used only as an auxiliary signal, never as an action. We evaluate on Xi'an's regular grid and Ho Chi Minh City's irregular polygon network, with Hanoi and Chengdu as ongoing work. The weight-conditioning mechanism confirms, after fixing a bug that had silently masked it, that one trained policy varies behavior across trade-offs, but a five-seed Xi'an sweep finds no reliable architectural advantage among the full method and its ablations; repeated reruns reveal GPU training non-determinism severe enough to reverse an equity finding an earlier draft reported, traced to two distinct causes (non-deterministic scatter reduction and an unseeded environment reset) and fixed and verified, though not yet used to regenerate this paper's own tables, and the tabular RL baseline still outperforms ours on raw demand. On Ho Chi Minh City, an encoder ablation collapses to near-zero demand where the full method does not; warm-starting from Xi'an's trained policy shows genuine positive transfer at initialization and, under a reduced training budget, reaches non-trivial demand and consistently higher coverage than training from scratch -- direct evidence for the curriculum's sample-efficiency claim. Implementing the true radiation-model accessibility measure where real population data makes it computable finds it does not share the coverage proxy's architectural sensitivity, a construct-validity finding we report rather than smooth over.
+\keywords{metro network expansion \and reinforcement learning \and graph neural networks \and multi-objective optimization \and social equity \and transfer learning}
+\end{abstract}
 
 \section{Introduction}\label{sec1}
 
@@ -132,7 +74,7 @@ Read together, though, these three papers leave a set of gaps that none of them,
 
 That third gap is not an abstract concern for us -- it is a practical blocker. Our motivating case studies are Hanoi and Ho Chi Minh City, Vietnam's two largest metropolitan areas, both mid-expansion right now: Hanoi operates two lines, Ho Chi Minh City one, with several more under construction or in planning. Neither city's existing rail network is remotely large enough, on its own, to define the rich candidate-region structure or estimate the OD demand signal that a GNN-based policy needs to learn from. Prior MNEP methods, developed and validated on cities with a decade or more of accumulated metro infrastructure, simply do not have anything to work with here. We treat this as a data problem rather than a reason to change what the method optimizes: where a city's own rail network is too sparse, we let its existing bus network -- typically far denser, since bus networks are cheaper to build and iterate on -- supply an auxiliary signal for candidate-region definition and demand estimation (Section~\ref{sec:data}). At no point does this let the policy choose, evaluate, or optimize a bus route; the action space, the objective, and the artifact the method ultimately designs remain metro network expansion, full stop. Separately, \citet{kang2019} study how last-train timetables and bus bridging services get coordinated on an \emph{existing} urban railway network -- an operational-phase problem, distinct from the design-phase question we address, but one that reinforces the same point from a different angle: bus and rail networks in practice are never planned in isolation from each other, which is exactly why treating bus data as a legitimate input to rail network design, without letting it become a rail network design \emph{output}, is the right scope boundary to draw.
 
-Putting these threads together, we propose a GNN-based, multi-objective actor-critic policy for urban rail transit network expansion that keeps \citeauthor{su2024}'s spatial representation, keeps \citeauthor{zhang2024}'s fairness-aware multi-objective reward, and directly answers \citeauthor{michailidis2026}'s efficiency critique -- not by abandoning the GNN, but by making the deep-RL training itself cheaper through a cross-city curriculum (pretraining on small networks before fine-tuning on large ones, an idea with no precedent in this literature since no prior MNEP paper trains across more than one city) together with prioritized experience replay \citep{schaul2016} and potential-based reward shaping. We evaluate the resulting method on a set of Asian cities chosen specifically to stress-test the parts of the design space the existing literature has not: Hanoi and Ho Chi Minh City at the small, data-sparse end, and Xi'an and Chengdu -- one of the largest metro networks in the world, and the home city of this journal's publishing institution -- at the large, mature end, with the city set left open-ended rather than fixed, since the value of the transfer-learning claim only grows with a larger and more diverse set of training cities. This paper reports results from the first two cities in that programme: a fully implemented, tested, GPU-trained instance of the method on Xi'an, benchmarked directly against a direct execution of \citeauthor{michailidis2026}'s own public tabular-method code release on the same data, together with two ablations that isolate the contribution of the GNN representation and the multi-objective reward respectively; and, on the structurally distinct polygon graph of Ho Chi Minh City, the same ablation design together with the first measured test of the cross-city curriculum itself (Section~\ref{sec:method-curriculum}), warm-starting Ho Chi Minh City's training from Xi'an's trained policy. Chengdu and Hanoi remain ongoing work (Section~\ref{sec:discussion}), with the infrastructure to complete them already built and described in detail so the path from this paper to that fuller result is concrete rather than aspirational.
+Putting these threads together, we propose a GNN-based, multi-objective actor-critic policy for urban rail transit network expansion that keeps \citeauthor{su2024}'s spatial representation, keeps \citeauthor{zhang2024}'s fairness-aware multi-objective reward, and directly answers \citeauthor{michailidis2026}'s efficiency critique -- not by abandoning the GNN, but by making the deep-RL training itself cheaper through a cross-city curriculum (pretraining on small networks before fine-tuning on large ones, an idea with no precedent in this literature since no prior MNEP paper trains across more than one city) together with prioritized experience replay \citep{schaul2016} and potential-based reward shaping. We evaluate the resulting method on a set of Asian cities chosen specifically to stress-test the parts of the design space the existing literature has not: Hanoi and Ho Chi Minh City at the small, data-sparse end, and Xi'an and Chengdu -- one of the largest metro networks in the world -- at the large, mature end, with the city set left open-ended rather than fixed, since the value of the transfer-learning claim only grows with a larger and more diverse set of training cities. This paper reports results from the first two cities in that programme: a fully implemented, tested, GPU-trained instance of the method on Xi'an, benchmarked directly against a direct execution of \citeauthor{michailidis2026}'s own public tabular-method code release on the same data, together with two ablations that isolate the contribution of the GNN representation and the multi-objective reward respectively; and, on the structurally distinct polygon graph of Ho Chi Minh City, the same ablation design together with the first measured test of the cross-city curriculum itself (Section~\ref{sec:method-curriculum}), warm-starting Ho Chi Minh City's training from Xi'an's trained policy. Chengdu and Hanoi remain ongoing work (Section~\ref{sec:discussion}), with the infrastructure to complete them already built and described in detail so the path from this paper to that fuller result is concrete rather than aspirational.
 
 In summary, this paper's contributions are:
 \begin{enumerate}
@@ -172,7 +114,7 @@ MetroGNN \citep{su2024} & Yes & No (demand only) & No & Beijing, Changsha \\
 Zhang et al. \citep{zhang2024} & No & Yes & No & Xi'an \\
 Tabular RL \citep{michailidis2026} & No & Yes & No & Xi'an, Amsterdam \\
 This paper & Yes & Yes & Measured$^\dagger$ & Xi'an, Ho Chi Minh City (reported); Hanoi, Chengdu (in progress) \\
-\botrule
+\bottomrule
 \end{tabularx}
 
 \vspace{0.5em}
@@ -299,13 +241,13 @@ Candidate regions & 841 uniform 1\,km$^2$ grid cells & 322 commune/ward polygons
 Per-step action count & Up to 8 (compass directions) & Variable, equal to the number of spatially-contiguous unselected neighbors of the current endpoint \\
 Feasibility mask source & \citet{michailidis2026}'s \texttt{MetroConstraints} & Queen-contiguity adjacency (Section~\ref{sec:data}) \\
 Rationale for this choice & Matches the standard benchmark exactly, enabling direct baseline comparison & Matches \citeauthor{su2024}'s formulation for irregular candidate-region graphs \\
-\botrule
+\bottomrule
 \end{tabularx}
 \end{table}
 
 \section{Case Studies and Data}\label{sec:data}
 
-The four cities anchoring this evaluation were not chosen for convenience; each one is doing a specific piece of argumentative work that the reference literature's city choices could not. Xi'an, a provincial capital of roughly thirteen million people in Shaanxi, China, has already been studied by two of our three reference papers -- \citet{michailidis2026} used it to argue tabular RL suffices, and \citet{zhang2024} used it to demonstrate the value of multi-objective fairness -- which makes it, unusually for this literature, a city where our own results can be checked against two independently reported baselines on the same underlying network rather than only our own reimplementations of them. Chengdu, roughly the same population but with one of the most extensive metro networks anywhere in the world after a decade of construction that shows no sign of slowing, is the scale extreme neither prior paper tested: if a tabular method's efficiency advantage is going to break down anywhere, or if a GNN's spatial reasoning is going to earn its computational cost anywhere, Chengdu's state-action space is large enough that the answer should become visible. Chengdu is also, not incidentally, the home city of Southwest Jiaotong University, this journal's publishing institution, and a network its own transportation researchers know intimately -- a reason to hold our Chengdu results to a higher standard of scrutiny, not a lower one. Hanoi and Ho Chi Minh City are the opposite extreme, and the one the reference literature has never touched at all: Vietnam's two largest metropolitan areas, home to a combined seventeen million people, are only now building the metro networks that Xi'an and Chengdu have had for a decade or more, which makes them exactly the kind of small, data-sparse, actively-expanding system this paper's motivating scope decision (Section~\ref{sec1}) was designed for -- and exactly the kind of system where getting network expansion planning right, before path-dependence sets in, matters most.
+The four cities anchoring this evaluation were not chosen for convenience; each one is doing a specific piece of argumentative work that the reference literature's city choices could not. Xi'an, a provincial capital of roughly thirteen million people in Shaanxi, China, has already been studied by two of our three reference papers -- \citet{michailidis2026} used it to argue tabular RL suffices, and \citet{zhang2024} used it to demonstrate the value of multi-objective fairness -- which makes it, unusually for this literature, a city where our own results can be checked against two independently reported baselines on the same underlying network rather than only our own reimplementations of them. Chengdu, roughly the same population but with one of the most extensive metro networks anywhere in the world after a decade of construction that shows no sign of slowing, is the scale extreme neither prior paper tested: if a tabular method's efficiency advantage is going to break down anywhere, or if a GNN's spatial reasoning is going to earn its computational cost anywhere, Chengdu's state-action space is large enough that the answer should become visible. Chengdu's metro network is also among the most extensively studied by Chinese transportation researchers, a network whose growth and operating data other groups know intimately -- a reason to hold our Chengdu results to a higher standard of scrutiny, not a lower one. Hanoi and Ho Chi Minh City are the opposite extreme, and the one the reference literature has never touched at all: Vietnam's two largest metropolitan areas, home to a combined seventeen million people, are only now building the metro networks that Xi'an and Chengdu have had for a decade or more, which makes them exactly the kind of small, data-sparse, actively-expanding system this paper's motivating scope decision (Section~\ref{sec1}) was designed for -- and exactly the kind of system where getting network expansion planning right, before path-dependence sets in, matters most.
 
 Because MNEP RL methods are trained per city rather than pooled across a fixed benchmark set, the city set is deliberately not fixed at four architecturally -- nothing in the method requires exactly this set, and we extend it with additional Asian cities (candidates: Beijing and Changsha, the two cities used by \citet{su2024}, if their released code/data prove usable) wherever open data can be confirmed, since a larger and more diverse city set strengthens both the transfer-learning claim of Section~\ref{sec:method-curriculum} and the scale-dependent generalization claim motivating the Chengdu comparison. Table~\ref{tab:cities} summarizes each city's role and its data-readiness status as of this paper's first experimental result; Section~\ref{sec:experiments} reports results for Xi'an, the furthest along, with the remaining three at varying stages of the pipeline described below.
 
@@ -319,7 +261,7 @@ Hanoi & Novel, small/emerging metro & 2 lines + planned extensions & Network/bou
 Ho Chi Minh City & Novel, medium/growing metro & 1 line (2024) + planned lines & Strongest of the four: real shapefiles for metro, bus, 2018 OD survey, population, POI, census (confirmed); full ablation and curriculum-transfer results reported (Section~\ref{sec:experiments-hcmc}) \\
 Xi'an & Direct benchmark vs.\ \citet{michailidis2026} and \citet{zhang2024} (both use Xi'an) & Medium, previously studied & OD grid confirmed reusable from prior code release \\
 Chengdu & Scale stress-test & $\sim$500+ km, one of the world's largest & Network geometry confirmed (multi-year); ridership portal unconfirmed \\
-\botrule
+\bottomrule
 \end{tabularx}
 \end{table}
 
@@ -382,7 +324,7 @@ Tabular RL \citep{michailidis2026} & $1.36 \pm 0.56$ & n/a$^\dagger$ & n/a$^\dag
 \texttt{single\_objective} (MetroGNN-like) & $0.48 \pm 0.49$ & $0.70 \pm 0.26$ & $0.15 \pm 0.06$ & 500 \\
 \texttt{flat\_encoder} (Zhang et al.-like) & $0.39 \pm 0.46$ & $0.38 \pm 0.18$ & $0.11 \pm 0.04$ & 500 \\
 \texttt{full} (Ours) & $0.18 \pm 0.37$ & $0.30 \pm 0.19$ & $0.10 \pm 0.04$ & 500 \\
-\botrule
+\bottomrule
 \end{tabularx}
 
 \vspace{0.5em}
@@ -405,7 +347,7 @@ Uniform (1/3, 1/3, 1/3) & 0.00 & 0.200 & 0.050 \\
 Demand-only (1, 0, 0) & 0.00 & 0.200 & 0.048 \\
 Equity-only (0, 1, 0) & 0.00 & 0.200 & 0.048 \\
 Coverage-only (0, 0, 1) & 0.06 & 0.317 & 0.117 \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -442,7 +384,7 @@ Episode & 0 & 20 & 40 & 499 \\
 Demand (\%) & 0.00 & 0.38 & 0.34 & 0.43 \\
 Equity & 1.000 & 0.554 & 0.532 & 0.454 \\
 Coverage & 0.042 & 0.128 & 0.133 & 0.132 \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -467,7 +409,7 @@ Method & Demand (\%) & Equity & Coverage & Training episodes \\
 \texttt{single\_objective} (MetroGNN-like) & $4.07 \pm 3.52$ & $0.72 \pm 0.10$ & $0.230 \pm 0.014$ & 500 \\
 \texttt{flat\_encoder} (Zhang et al.-like) & $0.19 \pm 0.29$ & $0.82 \pm 0.16$ & $0.222 \pm 0.038$ & 500 \\
 \texttt{full} (Ours) & $2.83 \pm 3.51$ & $0.84 \pm 0.15$ & $0.247 \pm 0.032$ & 500 \\
-\botrule
+\bottomrule
 \end{tabularx}
 \end{table}
 
@@ -502,7 +444,7 @@ Method & Radiation accessibility \\
 \texttt{single\_objective} (MetroGNN-like) & $0.0348 \pm 0.0034$ \\
 \texttt{flat\_encoder} (Zhang et al.-like) & $0.0417 \pm 0.0064$ \\
 \texttt{full} (Ours) & $0.0385 \pm 0.0023$ \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -530,7 +472,7 @@ Condition & Demand (\%) & Equity & Coverage \\
 \midrule
 \texttt{scratch} (random init) & $2.57 \pm 2.42$ & $0.75 \pm 0.25$ & $0.267 \pm 0.016$ \\
 \texttt{curriculum} (from Xi'an) & $3.45 \pm 3.77$ & $0.72 \pm 0.17$ & $0.265 \pm 0.036$ \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -546,7 +488,7 @@ Condition (100 episodes) & Demand (\%) & Equity & Coverage \\
 \midrule
 \texttt{scratch} (random init) & $0.03 \pm 0.04$ & $0.90 \pm 0.17$ & $0.253 \pm 0.010$ \\
 \texttt{curriculum} (from Xi'an) & $1.34 \pm 1.19$ & $0.91 \pm 0.01$ & $0.291 \pm 0.014$ \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -586,7 +528,7 @@ None of these limitations, we think, undermine the paper's central methodologica
 
 \textbf{Practical implications for transit planners.} It is worth stating plainly what a transit planning authority could and could not reasonably do with a method like this one today, distinct from the more abstract scale and transfer-learning claims above. What it could do now: use the Tchebycheff weight-sampling mechanism (Section~\ref{sec:problem}) not to pick one weighting and commit to it, but to generate and compare several candidate expansion plans under explicitly different demand/equity/coverage priorities -- surfacing, concretely, what a more demand-focused plan would look like next to a more equity-focused one for the same city, budget, and existing network, which is a genuinely useful planning artifact even before the method's numbers are competitive with a specialized baseline on any single axis. What it could not yet reasonably do: replace an existing planning process's own demand-modeling and cost-estimation tools, or be trusted as the sole basis for an actual construction decision, given the honestly limited scope of validation reported in Section~\ref{sec:experiments} -- two cities, a coverage proxy that a direct check found does not track the true accessibility measure it stands in for, and training runs sensitive enough to non-determinism that a single run should not be over-trusted. We think this gap between ``useful exploratory tool today'' and ``validated decision-support system'' is exactly the right place for this paper to sit at this stage of the research programme, and exactly why Section~\ref{sec13}'s future-work items are framed as prerequisites to a stronger practical claim, not optional extensions of an already-sufficient one.
 
-\textbf{Broader impact and ethical considerations.} A method that recommends where public infrastructure money gets spent is not a neutral piece of software, and it is worth stating directly what could go wrong if a method like this one were deployed carelessly, rather than leaving the reader to infer it. The equity objective in Section~\ref{sec:problem} is only as meaningful as the demographic groups it is computed over; in the Xi'an experiment (Section~\ref{sec:experiments}) those groups are price-based population bands inherited from the underlying dataset (Section~\ref{sec:data}), which is a reasonable proxy for socioeconomic disparity but not the only axis of transit inequity that matters -- age, disability, gender-differentiated travel patterns, and racial or ethnic segregation are all well-documented dimensions of transit equity \citep{raza2023} that a price-only grouping does not directly represent, and a planner using a system like this one should not mistake ``the equity metric improved'' for ``the network is now equitable in every sense that matters.'' There is also a more structural risk worth naming: an algorithmic recommendation, however well-intentioned its equity term, can function as a way to launder a politically contestable prioritization decision as an objective, technical output, obscuring the value judgments (which groups, which weighting, which time horizon) that went into it and that remain, properly, decisions for accountable public officials and the communities affected by them to make -- exactly the reason our Tchebycheff formulation supports a range of trade-offs rather than baking in one fixed weighting (Section~\ref{sec:problem}), and exactly why we think a tool like this should inform planning deliberation rather than substitute for it. We also note, in the spirit of the ``Environmental impact and sustainability'' scope of this journal, that the training-cost and carbon comparisons in Section~\ref{sec:experiments-carbon} are not incidental to this paper's contribution but part of it: a method's environmental cost during development is a real cost, however small relative to the infrastructure it ultimately helps plan, and reporting it honestly -- including the finding that our current implementation does not yet make efficient use of its GPU -- is consistent with treating that cost as something to be measured and minimized rather than assumed away.
+\textbf{Broader impact and ethical considerations.} A method that recommends where public infrastructure money gets spent is not a neutral piece of software, and it is worth stating directly what could go wrong if a method like this one were deployed carelessly, rather than leaving the reader to infer it. The equity objective in Section~\ref{sec:problem} is only as meaningful as the demographic groups it is computed over; in the Xi'an experiment (Section~\ref{sec:experiments}) those groups are price-based population bands inherited from the underlying dataset (Section~\ref{sec:data}), which is a reasonable proxy for socioeconomic disparity but not the only axis of transit inequity that matters -- age, disability, gender-differentiated travel patterns, and racial or ethnic segregation are all well-documented dimensions of transit equity \citep{raza2023} that a price-only grouping does not directly represent, and a planner using a system like this one should not mistake ``the equity metric improved'' for ``the network is now equitable in every sense that matters.'' There is also a more structural risk worth naming: an algorithmic recommendation, however well-intentioned its equity term, can function as a way to launder a politically contestable prioritization decision as an objective, technical output, obscuring the value judgments (which groups, which weighting, which time horizon) that went into it and that remain, properly, decisions for accountable public officials and the communities affected by them to make -- exactly the reason our Tchebycheff formulation supports a range of trade-offs rather than baking in one fixed weighting (Section~\ref{sec:problem}), and exactly why we think a tool like this should inform planning deliberation rather than substitute for it. We also note that the training-cost and carbon comparisons in Section~\ref{sec:experiments-carbon} are not incidental to this paper's contribution but part of it: a method's environmental cost during development is a real cost, however small relative to the infrastructure it ultimately helps plan, and reporting it honestly -- including the finding that our current implementation does not yet make efficient use of its GPU -- is consistent with treating that cost as something to be measured and minimized rather than assumed away, and with this paper's broader framing of network expansion as a resource-allocation problem in which the resources spent producing the recommendation are themselves part of the account.
 
 \section{Conclusion}\label{sec13}
 
@@ -600,16 +542,14 @@ We also reported a second, structurally distinct city, Ho Chi Minh City, whose i
 
 That reading generates a concrete, near-term roadmap rather than an open-ended one, and we state it explicitly rather than leave it implicit -- shorter than an earlier version of this list, since widening the seed sweep, testing the reduced-budget curriculum, implementing the radiation model for Ho Chi Minh City, and enabling and verifying deterministic training are no longer future work but results reported above. First, and most immediately given how much it mattered for the findings already in this paper: re-run the full experimental suite (Tables~\ref{tab:results}--\ref{tab:radiation-accessibility}) under the now-verified deterministic configuration (Section~\ref{sec:experiments}), to determine whether Tables~\ref{tab:results} and~\ref{tab:hcmc-results}'s architectural comparisons are stable under deterministic training or remain genuinely inconclusive at this sample size even once run-to-run noise is removed -- deterministic training was implemented and confirmed to produce byte-identical re-runs in this revision, but the roughly fifty training jobs behind this paper's tables were not re-collected under it, for the reasons given above. Second: run the same full method, unmodified, on Chengdu -- the single experiment this paper's central scale-dependent hypothesis most directly hinges on, and the one most likely to either vindicate or meaningfully qualify \citeauthor{michailidis2026}'s efficiency claim outside the mid-sized regime it has so far been tested in. Third: widen the curriculum, reduced-budget-curriculum, and radiation-accessibility evaluations (Sections~\ref{sec:experiments-radiation}--\ref{sec:experiments-curriculum}) from three seeds to five, matching the two cities' main ablation tables, to determine whether the reduced-budget curriculum's seed-42 demand exception (Section~\ref{sec:experiments-curriculum}) is a stable minority pattern or noise. Fourth: investigate why the radiation-model accessibility measure showed no architectural sensitivity where the coverage proxy did (Section~\ref{sec:experiments-radiation}) -- whether by testing at a higher station-budget-to-candidate-region ratio than Ho Chi Minh City's 20-of-322, or by incorporating the radiation model into the training reward directly rather than evaluating it only post-hoc, which this submission's scope did not allow. Fifth: extend Hanoi's data pipeline and run it as the fourth and final case-study city, completing the four-city design (Section~\ref{sec:data}). None of these five steps requires a new architecture or a new formulation -- the method, the code, and the data pipelines described in this paper already support all five; what remains is running them, and we intend to.
 
-\backmatter
-
-\bmhead{Acknowledgements}
-
+\begin{acknowledgements}
 None.
+\end{acknowledgements}
 
 \section*{Declarations}
 
 \begin{itemize}
-\item \textbf{Funding}: Not applicable. (Publication costs for \textit{Railway Engineering Science} are covered by Southwest Jiaotong University; no external funding has been received for this work.)
+\item \textbf{Funding}: Not applicable. The author received no specific grant from any funding agency for this work.
 \item \textbf{Competing interests}: The author declares no competing interests.
 \item \textbf{Ethics approval and consent to participate}: Not applicable -- this study uses publicly available transit network, demographic, and demand-proxy data and does not involve human or animal subjects.
 \item \textbf{Consent for publication}: Not applicable.
@@ -652,7 +592,7 @@ Stations per episode ($nr\_stations$) & 20 \\
 Price-equity groups ($nr\_groups$) & 5 \\
 Coverage radius $K$ (Chebyshev) & 2 grid cells \\
 Random seeds & 1, 2, 3, 7, 42 \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -686,7 +626,7 @@ Test episodes & 10 \\
 Stations per episode & 20 \\
 Existing lines & included (not ignored) \\
 Random seeds & 1, 2, 3, 7, 42 \\
-\botrule
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -717,21 +657,13 @@ $e^s_{ij}, e^o_{ij}$ & Spatial-contiguity and OD-flow edge weights between $n_i,
 $\mathbf{q}_t, \mathbf{q}_t'$ & Pooled network-state query, and its weight-conditioned form \\
 $\pi_\theta, V_\phi$ & Policy and value-function networks \\
 $G_t, \hat{A}_t$ & Monte Carlo return-to-go and normalized advantage at step $t$ \\
-\botrule
+\bottomrule
 \end{tabularx}
 \end{table}
 
 \end{appendices}
 
-%%===========================================================================================%%
-%% If you are submitting to one of the Nature Portfolio journals, using the eJP submission   %%
-%% system, please include the references within the manuscript file itself. You may do this  %%
-%% by copying the reference list from your .bbl file, paste it into the main manuscript .tex %%
-%% file, and delete the associated \verb+\bibliography+ commands.                            %%
-%%===========================================================================================%%
-
+\bibliographystyle{spbasic}
 \bibliography{references}% common bib file
-%% if required, the content of .bbl file can be included here once bbl is generated
-%%\input sn-article.bbl
 
 \end{document}

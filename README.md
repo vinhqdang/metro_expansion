@@ -17,14 +17,19 @@ accordingly; see `manuscript/cover_letter.tex`.
 
 ## Layout
 
-- `manuscript/` -- LaTeX manuscript and `cover_letter.tex`. **Format note:** the manuscript
-  is still built on the Springer Nature `sn-jnl` template with Vancouver-numbered
-  citations (matching *Railway Engineering Science*'s house style); *Computational
-  Economics* uses the `svjour3` class with the `spbasic` (author-year) bibliography style,
-  so the manuscript needs reformatting to that template/citation style before actual
-  submission -- not yet done. Once reformatted, build with
-  `pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex` from within
-  `manuscript/`.
+- `manuscript/` -- LaTeX manuscript and `cover_letter.tex`. Reformatted from the earlier
+  Springer Nature `sn-jnl`/Vancouver-numbered template (*Railway Engineering Science*'s
+  house style) to `svjour3` with the `spbasic` (author-year) bibliography style, matching
+  *Computational Economics*. Three passages that referenced the old target journal's
+  publisher (Southwest Jiaotong University/Chengdu) and scope wording were also corrected.
+  **Before actual submission:** `manuscript/svjour3.cls` here is a local preview shim (the
+  real Springer `svjour3.cls` isn't distributable via CTAN and wasn't reachable from this
+  environment) -- it approximates single-column Springer layout well enough to proofread
+  content, but must be replaced with the genuine class from the journal's own LaTeX author
+  template before submission; `main.tex`'s source targets the real class and shouldn't need
+  changes when it's dropped in. `spbasic.bst` is the genuine, freely-redistributable style.
+  Build with `pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex`
+  from within `manuscript/`.
 - `docs/superpowers/specs/` -- design spec for the project (research gap, contribution, method, case studies, experimental design).
 - `src/gnn/` -- heterogeneous graph state encoder (spatial-contiguity + OD-flow relations).
 - `src/rl/` -- multi-objective actor-critic policy, Tchebycheff reward scalarization, prioritized replay buffer.
