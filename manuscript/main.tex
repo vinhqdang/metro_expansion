@@ -1,9 +1,17 @@
-% Computational Economics (Springer) template: svjour3 class, spbasic (author-year)
-% bibliography style. Converted from the Springer Nature sn-jnl/Vancouver-numbered
-% template used for the earlier Railway Engineering Science submission.
+% Transportation Research Part C: Emerging Technologies (Elsevier) template:
+% elsarticle class, elsarticle-num (numbered) bibliography style. Converted from
+% the svjour3/spbasic template used for the Computational Economics attempt,
+% which the review panel concluded was a scope-fit mismatch (see review notes);
+% before that, from the Springer Nature sn-jnl/Vancouver-numbered template used
+% for the original Railway Engineering Science submission.
 
-\documentclass{svjour3}
-\smartqed
+% Note: TRC's own reference guide names elsarticle-num (numbered) as its house
+% citation style, but this manuscript's prose relies heavily on \citeauthor (named
+% in-text citations, e.g. "\citeauthor{su2024}'s spatial representation"), which
+% elsarticle-num.bst does not support under natbib. Using author-year instead --
+% both are officially supported elsarticle configurations -- to keep the prose
+% correct; swap to [number] + elsarticle-num.bst at production stage if required.
+\documentclass[authoryear,preprint,12pt]{elsarticle}
 
 \usepackage{graphicx}%
 \usepackage{multirow}%
@@ -25,7 +33,7 @@
 \usepackage{url}%
 %%%%
 
-\journalname{Computational Economics}
+\journal{Transportation Research Part C: Emerging Technologies}
 
 %% as per the requirement new theorem styles can be included as shown below
 \theoremstyle{plain}%
@@ -44,23 +52,25 @@
 
 \begin{document}
 
+\begin{frontmatter}
+
 \title{Fair and Transferable Graph Reinforcement Learning for Urban Rail Transit Network Expansion Across Asian Cities}
-\titlerunning{Fair and Transferable Graph RL for Rail Transit Expansion}
 
 \author{Quang-Vinh Dang}
-
-\institute{Q.-V. Dang \at
-  British University Vietnam, Hung Yen, Vietnam \\
-  \email{vinh.dq4@buv.edu.vn}}
-
-\date{Received: \today}
-
-\maketitle
+\ead{vinh.dq4@buv.edu.vn}
+\affiliation{organization={British University Vietnam},
+             city={Hung Yen},
+             country={Vietnam}}
 
 \begin{abstract}
 The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work shows GNN encoders improve demand satisfaction, multi-objective decomposition balances equity against demand, and tabular RL matches deep RL cheaply, but no method combines all three, and none has been tested from small emerging systems to the world's largest networks. We propose a GNN-based, multi-objective actor-critic policy for rail transit expansion, scalarized via Tchebycheff decomposition and made sample-efficient via cross-city curriculum transfer; each city's bus network is used only as an auxiliary signal, never as an action. We evaluate on Xi'an's regular grid and Ho Chi Minh City's irregular polygon network, with Hanoi and Chengdu as ongoing work. The weight-conditioning mechanism confirms, after fixing a bug that had silently masked it, that one trained policy varies behavior across trade-offs, but a five-seed Xi'an sweep finds no reliable architectural advantage among the full method and its ablations; repeated reruns reveal GPU training non-determinism severe enough to reverse an equity finding an earlier draft reported, traced to two distinct causes (non-deterministic scatter reduction and an unseeded environment reset) and fixed and verified, though not yet used to regenerate this paper's own tables, and the tabular RL baseline still outperforms ours on raw demand. On Ho Chi Minh City, an encoder ablation collapses to near-zero demand where the full method does not; warm-starting from Xi'an's trained policy shows genuine positive transfer at initialization and, under a reduced training budget, reaches non-trivial demand and consistently higher coverage than training from scratch -- direct evidence for the curriculum's sample-efficiency claim. Implementing the true radiation-model accessibility measure where real population data makes it computable finds it does not share the coverage proxy's architectural sensitivity, a construct-validity finding we report rather than smooth over.
-\keywords{metro network expansion \and reinforcement learning \and graph neural networks \and multi-objective optimization \and social equity \and transfer learning}
 \end{abstract}
+
+\begin{keyword}
+metro network expansion \sep reinforcement learning \sep graph neural networks \sep multi-objective optimization \sep social equity \sep transfer learning
+\end{keyword}
+
+\end{frontmatter}
 
 \section{Introduction}\label{sec1}
 
@@ -542,22 +552,21 @@ We also reported a second, structurally distinct city, Ho Chi Minh City, whose i
 
 That reading generates a concrete, near-term roadmap rather than an open-ended one, and we state it explicitly rather than leave it implicit -- shorter than an earlier version of this list, since widening the seed sweep, testing the reduced-budget curriculum, implementing the radiation model for Ho Chi Minh City, and enabling and verifying deterministic training are no longer future work but results reported above. First, and most immediately given how much it mattered for the findings already in this paper: re-run the full experimental suite (Tables~\ref{tab:results}--\ref{tab:radiation-accessibility}) under the now-verified deterministic configuration (Section~\ref{sec:experiments}), to determine whether Tables~\ref{tab:results} and~\ref{tab:hcmc-results}'s architectural comparisons are stable under deterministic training or remain genuinely inconclusive at this sample size even once run-to-run noise is removed -- deterministic training was implemented and confirmed to produce byte-identical re-runs in this revision, but the roughly fifty training jobs behind this paper's tables were not re-collected under it, for the reasons given above. Second: run the same full method, unmodified, on Chengdu -- the single experiment this paper's central scale-dependent hypothesis most directly hinges on, and the one most likely to either vindicate or meaningfully qualify \citeauthor{michailidis2026}'s efficiency claim outside the mid-sized regime it has so far been tested in. Third: widen the curriculum, reduced-budget-curriculum, and radiation-accessibility evaluations (Sections~\ref{sec:experiments-radiation}--\ref{sec:experiments-curriculum}) from three seeds to five, matching the two cities' main ablation tables, to determine whether the reduced-budget curriculum's seed-42 demand exception (Section~\ref{sec:experiments-curriculum}) is a stable minority pattern or noise. Fourth: investigate why the radiation-model accessibility measure showed no architectural sensitivity where the coverage proxy did (Section~\ref{sec:experiments-radiation}) -- whether by testing at a higher station-budget-to-candidate-region ratio than Ho Chi Minh City's 20-of-322, or by incorporating the radiation model into the training reward directly rather than evaluating it only post-hoc, which this submission's scope did not allow. Fifth: extend Hanoi's data pipeline and run it as the fourth and final case-study city, completing the four-city design (Section~\ref{sec:data}). None of these five steps requires a new architecture or a new formulation -- the method, the code, and the data pipelines described in this paper already support all five; what remains is running them, and we intend to.
 
-\begin{acknowledgements}
-None.
-\end{acknowledgements}
+\section*{CRediT authorship contribution statement}
 
-\section*{Declarations}
+\textbf{Quang-Vinh Dang}: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing -- original draft, Writing -- review \& editing.
 
-\begin{itemize}
-\item \textbf{Funding}: Not applicable. The author received no specific grant from any funding agency for this work.
-\item \textbf{Competing interests}: The author declares no competing interests.
-\item \textbf{Ethics approval and consent to participate}: Not applicable -- this study uses publicly available transit network, demographic, and demand-proxy data and does not involve human or animal subjects.
-\item \textbf{Consent for publication}: Not applicable.
-\item \textbf{Data availability}: The Xi'an OD grid, existing-line geometry, and price-group data are from \citet{michailidis2026}'s public, MIT-licensed \texttt{mo-tndp} code release (\url{https://github.com/sias-uva/mo-tndp}), redistributed unmodified as a git submodule in the project repository. The Ho Chi Minh City shapefiles (metro, bus, 2018 household-travel-survey OD, population, POI, census) are from the CityScope/MIT Media Lab \texttt{CSL\_HCMC} repository (\url{https://github.com/CityScope/CSL_HCMC}), which carries no explicit license; per that repository's terms we treat it as research/fair-use only and do not redistribute the underlying files ourselves, but link to the original source and document the exact files used in \texttt{docs/data\_sources.md}. Xi'an and Chengdu network-geometry shapefiles are from the openly licensed \texttt{GZUPA/subway-traffic-data-set} (\url{https://github.com/GZUPA/subway-traffic-data-set}), also redistributed as a submodule. All derived/preprocessed artifacts our own pipeline produces from these sources (Section~\ref{sec:data}) are regenerable from the code and data sources above via the scripts in the project repository.
-\item \textbf{Materials availability}: Not applicable.
-\item \textbf{Code availability}: All code described in this paper -- the GNN encoder, multi-objective policy, training scripts for both cities, evaluation and figure-generation scripts, and the full test suite -- is publicly available now, not embargoed until publication, at \url{https://github.com/vinhqdang/metro_expansion}.
-\item \textbf{Author contribution}: Q.-V.D. conceived the study, developed the method, and wrote the manuscript.
-\end{itemize}
+\section*{Declaration of competing interest}
+
+The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Data availability}
+
+The Xi'an OD grid, existing-line geometry, and price-group data are from \citet{michailidis2026}'s public, MIT-licensed \texttt{mo-tndp} code release (\url{https://github.com/sias-uva/mo-tndp}), redistributed unmodified as a git submodule in the project repository. The Ho Chi Minh City shapefiles (metro, bus, 2018 household-travel-survey OD, population, POI, census) are from the CityScope/MIT Media Lab \texttt{CSL\_HCMC} repository (\url{https://github.com/CityScope/CSL_HCMC}), which carries no explicit license; per that repository's terms we treat it as research/fair-use only and do not redistribute the underlying files ourselves, but link to the original source and document the exact files used in \texttt{docs/data\_sources.md}. Xi'an and Chengdu network-geometry shapefiles are from the openly licensed \texttt{GZUPA/subway-traffic-data-set} (\url{https://github.com/GZUPA/subway-traffic-data-set}), also redistributed as a submodule. All derived/preprocessed artifacts our own pipeline produces from these sources (Section~\ref{sec:data}) are regenerable from the code and data sources above via the scripts in the project repository. All code described in this paper -- the GNN encoder, multi-objective policy, training scripts for both cities, evaluation and figure-generation scripts, and the full test suite -- is publicly available now, not embargoed until publication, at \url{https://github.com/vinhqdang/metro_expansion}.
+
+\section*{Acknowledgements}
+
+This work received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
 
 \begin{appendices}
 \counterwithin*{table}{section}
@@ -663,7 +672,7 @@ $G_t, \hat{A}_t$ & Monte Carlo return-to-go and normalized advantage at step $t$
 
 \end{appendices}
 
-\bibliographystyle{spbasic}
+\bibliographystyle{elsarticle-harv}
 \bibliography{references}% common bib file
 
 \end{document}

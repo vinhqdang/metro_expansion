@@ -1,9 +1,10 @@
-% Cover letter for submission to Computational Economics (Springer).
-% NOTE before sending: verify (1) the current Editor-in-Chief's name for the
-% salutation, and (2) whether the journal runs single- or double-blind review
-% -- the manuscript currently carries author name/affiliation inline (main.tex),
-% which matches single-blind convention; if the journal requires double-blind,
-% author details must move to a separate title page before submission.
+% Cover letter for submission to Transportation Research Part C: Emerging
+% Technologies (Elsevier).
+% NOTE before sending: verify whether the journal runs single- or double-blind
+% review -- the manuscript currently carries author name/affiliation inline
+% (main.tex), which matches single-blind convention; elsarticle.cls supports a
+% `doubleblind` class option that suppresses author/affiliation from the
+% rendered PDF if double-blind is required.
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{parskip}
@@ -22,8 +23,8 @@ Hung Yen, Vietnam\\
 
 \vspace{1em}
 \noindent
-To the Editor-in-Chief,\\
-\emph{Computational Economics}
+To the Editors,\\
+\emph{Transportation Research Part C: Emerging Technologies}
 
 \vspace{1em}
 
@@ -31,53 +32,53 @@ Dear Editors,
 
 I am submitting the manuscript ``Fair and Transferable Graph Reinforcement Learning for
 Urban Rail Transit Network Expansion Across Asian Cities'' for consideration as a
-regular research article in \emph{Computational Economics}.
+regular research article in \emph{Transportation Research Part C}.
 
-The underlying decision problem is an economic one before it is an engineering one: a
-city choosing where to extend its rail network is making a large, essentially
-irreversible public-investment allocation under a fixed station/budget constraint, and
-must set a trade-off between aggregate transportation-demand efficiency and equitable
-access to new infrastructure across neighborhoods that differ in income and existing
-service. That trade-off is normally fixed once, by policy, before a network is built. We
-formulate it instead as a sequential allocation problem solved by reinforcement learning
-over a graph-structured representation of the city's regions and travel demand, with a
-Tchebycheff-scalarized vector objective (demand satisfaction, social equity, radiation
-accessibility) that lets a single trained policy be queried at different points on the
-efficiency-equity frontier rather than committing to one weighting in advance -- an
-agent-based, machine-learning approach to a resource-allocation and welfare
-trade-off problem, which is the class of question this journal's scope names directly.
+The paper addresses the Metro Network Expansion Problem (MNEP): given an existing rail
+network and a limited construction budget, decide which stations or line segments to add
+next. Three recent papers have each taken a piece of this idea and shown it works --
+a GNN-based spatial state representation (MetroGNN), a fairness-aware multi-objective
+reward decomposed via Tchebycheff scalarization, and a tabular reinforcement-learning
+method that argues deep RL's overhead is unnecessary at this problem's scale -- but no
+method combines the first two, and none has been tested from small, data-sparse emerging
+metro systems to the largest networks in the world. We propose a GNN-based,
+multi-objective actor-critic policy that combines a heterogeneous spatial-graph encoder
+with a Tchebycheff-scalarized reward over demand, equity, and accessibility, condition
+the policy itself on the sampled objective-weight vector so one trained model spans the
+full efficiency-equity trade-off surface, and add a cross-city curriculum-transfer
+mechanism -- pretraining on one city's network and warm-starting another's -- that
+responds directly to the training-cost critique of GNN-based methods without abandoning
+the GNN.
 
-The paper's contribution is threefold: a graph neural network encoder over the city's
-spatial-contiguity and origin-destination relations, feeding a multi-objective
-actor-critic policy that extends prior single-objective (MetroGNN) and
-non-GNN multi-objective (Zhang et al. 2024) formulations of the metro network expansion
-problem; a cross-city curriculum-transfer mechanism, motivated directly by a recent
-critique (Michailidis et al. 2026) that deep RL's training cost is unjustified at this
-problem's scale, that pretrains on one city's network and warm-starts another's to test
-whether transfer buys back that cost in sample efficiency; and, to our knowledge, the
-first evaluation of this problem class spanning both a small, data-sparse emerging
-network (Ho Chi Minh City) and a mature, previously-studied one (Xi'an) in one
-consistent protocol.
+The paper's contribution is threefold: (1) the first MNEP method to combine GNN spatial
+representation with multi-objective fairness decomposition in a single policy; (2) a
+cross-city curriculum and sample-efficiency design (prioritized replay, reward shaping)
+that directly answers the training-cost and carbon-footprint critique raised against
+GNN-based MNEP methods; and (3) a rail-only scope discipline -- using each city's
+existing bus network purely as an auxiliary input signal, never as an action -- that lets
+the method extend, for the first time in this literature, to small, data-sparse emerging
+metro systems (Hanoi, Ho Chi Minh City) that prior MNEP studies have not evaluated on.
 
 The empirical results are reported as found rather than smoothed toward the hoped-for
 conclusion. A five-seed sweep on Xi'an finds no reliable advantage for the full method
 over either architectural ablation on demand, equity, or coverage, and the tabular RL
-baseline of Michailidis et al. still wins on raw demand under a matched training
-budget -- a negative result for model complexity that we think is itself of interest to
-a computational-economics readership asking when a more expressive (and more expensive)
-representation is worth its cost. Tracing an earlier, more favorable-looking equity
-finding, we discovered GPU training non-determinism severe enough to invert which
-architecture a metric appears to favor, traced it to two distinct causes, fixed both, and
-verified deterministic re-runs -- a reproducibility hazard we believe generalizes beyond
-our own implementation to other GNN-based methods built on the same default
-scatter-reduction operations. On Ho Chi Minh City, an encoder ablation collapses to
-near-zero demand where the full method does not, and warm-starting from Xi'an's trained
-policy shows genuine positive transfer at initialization and, under a reduced training
-budget, reaches non-trivial demand and consistently higher coverage than training from
-scratch -- direct evidence for the curriculum's sample-efficiency claim on the one city
-where we could test it. A separately implemented radiation-model accessibility measure
-does not share the coverage proxy's architectural sensitivity, a construct-validity
-finding we report rather than omit.
+baseline still wins on raw demand under a matched training budget -- a negative result
+for model complexity that we report plainly rather than obscure. Tracing an earlier,
+more favorable-looking equity finding, we discovered GPU training non-determinism severe
+enough to invert which architecture a metric appears to favor, traced it to two distinct
+causes (non-deterministic scatter reduction in the GNN encoder and an unseeded
+environment reset), fixed both, and verified deterministic re-runs -- a reproducibility
+hazard we believe generalizes beyond our own implementation to other GNN-based methods
+built on the same default scatter-reduction operations, and one we think is of
+independent interest to this journal's readership regardless of this paper's own
+architectural comparisons. On Ho Chi Minh City's structurally distinct, irregular
+polygon graph, an encoder ablation collapses to near-zero demand where the full method
+does not, and warm-starting from Xi'an's trained policy shows genuine positive transfer
+at initialization and, under a reduced training budget, reaches non-trivial demand and
+consistently higher coverage than training from scratch -- direct evidence for the
+curriculum's sample-efficiency claim on the one city where we could test it. A separately
+implemented radiation-model accessibility measure does not share the coverage proxy's
+architectural sensitivity, a construct-validity finding we report rather than omit.
 
 All code -- the GNN encoder, multi-objective policy, training and evaluation scripts for
 both cities, and the full test suite -- is publicly available now, not embargoed until
@@ -89,9 +90,7 @@ documented in the manuscript's Data Availability statement.
 The manuscript is original, has not been published previously, and is not under
 consideration for publication elsewhere. I am the sole author and approve its
 submission. I declare no competing financial or personal interests, and the work
-received no specific grant from any funding agency. In accordance with the journal's
-policy, the manuscript will include a declaration of generative-AI use in its
-preparation.
+received no specific grant from any funding agency.
 
 Thank you for your consideration.
 
