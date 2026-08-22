@@ -1,10 +1,30 @@
 # metro_expansion
 
-Research code and manuscript for a submission to [*Railway Engineering Science*](https://link.springer.com/journal/40534/aims-and-scope) (Springer / Southwest Jiaotong University): a GNN-based, multi-objective reinforcement learning method for urban rail transit network expansion, evaluated across multiple Asian cities (Hanoi, Ho Chi Minh City, Xi'an, Chengdu, extensible to more).
+Research code and manuscript for a submission to [*Computational Economics*](https://link.springer.com/journal/10614/aims-and-scope) (Springer, official journal of the Society for Computational Economics): a GNN-based, multi-objective reinforcement learning method for urban rail transit network expansion, evaluated across multiple Asian cities (Hanoi, Ho Chi Minh City, Xi'an, Chengdu, extensible to more).
+
+The paper frames metro network expansion as a public-investment resource-allocation
+problem -- trading aggregate transportation-demand efficiency against equitable access
+across neighborhoods under a fixed budget -- solved with agent-based/ML computational
+methods (graph representation learning, multi-objective reinforcement learning,
+Tchebycheff scalarization), which is why it targets *Computational Economics* rather
+than a transportation-engineering venue.
+
+**Submission history:** originally targeted at *Railway Engineering Science* (Springer /
+Southwest Jiaotong University); desk-rejected there (2026-08-22), most likely for scope
+fit (that journal's remit is rail engineering design/operations, not the resource-allocation/
+welfare framing this paper leads with). Retargeted to *Computational Economics*
+accordingly; see `manuscript/cover_letter.tex`.
 
 ## Layout
 
-- `manuscript/` -- LaTeX manuscript (Springer Nature template, Vancouver numbered citation style). Build with `pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex` from within `manuscript/`.
+- `manuscript/` -- LaTeX manuscript and `cover_letter.tex`. **Format note:** the manuscript
+  is still built on the Springer Nature `sn-jnl` template with Vancouver-numbered
+  citations (matching *Railway Engineering Science*'s house style); *Computational
+  Economics* uses the `svjour3` class with the `spbasic` (author-year) bibliography style,
+  so the manuscript needs reformatting to that template/citation style before actual
+  submission -- not yet done. Once reformatted, build with
+  `pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex` from within
+  `manuscript/`.
 - `docs/superpowers/specs/` -- design spec for the project (research gap, contribution, method, case studies, experimental design).
 - `src/gnn/` -- heterogeneous graph state encoder (spatial-contiguity + OD-flow relations).
 - `src/rl/` -- multi-objective actor-critic policy, Tchebycheff reward scalarization, prioritized replay buffer.
