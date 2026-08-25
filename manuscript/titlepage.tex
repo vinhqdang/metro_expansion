@@ -1,0 +1,70 @@
+% Title page for double-anonymized submission to Transportation Research Part B:
+% Methodological (Elsevier). Uploaded as a separate file from main.tex, which
+% carries the [doubleblind] elsarticle class option and has had the CRediT and
+% Data availability sections manually anonymized -- see the notes there. This
+% file is the only place the author's identity, affiliation, and the real code
+% repository URL should appear.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{parskip}
+\usepackage{url}
+\usepackage{microtype}
+\pagestyle{empty}
+\sloppy
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries Fair and Transferable Graph Reinforcement Learning for Urban Rail Transit Network Expansion Across Asian Cities}
+\end{center}
+
+\vspace{1.5em}
+\noindent
+\textbf{Quang-Vinh Dang}$^{*}$\\
+British University Vietnam, Hung Yen, Vietnam\\
+Email: \url{vinh.dq4@buv.edu.vn}
+
+\vspace{1em}
+\noindent
+$^{*}$Corresponding author; sole author.
+
+\vspace{2em}
+\noindent
+\textbf{Abstract}
+
+\noindent
+The Metro Network Expansion Problem (MNEP) -- deciding where to extend rail lines and place new stations -- has recently been formulated as a sequential decision process solvable by reinforcement learning (RL). Prior work shows GNN encoders improve demand satisfaction, multi-objective decomposition balances equity against demand, and tabular RL matches deep RL cheaply, but no method combines all three, and none has been tested from small emerging systems to the world's largest networks. We propose a GNN-based, multi-objective actor-critic policy for rail transit expansion, scalarized via Tchebycheff decomposition and made sample-efficient via cross-city curriculum transfer; each city's bus network is used only as an auxiliary signal, never as an action. We evaluate on Xi'an's regular grid and Ho Chi Minh City's irregular polygon network, with Hanoi and Chengdu as ongoing work. The weight-conditioning mechanism confirms, after fixing a bug that had silently masked it, that one trained policy varies behavior across trade-offs, but a five-seed Xi'an sweep finds no reliable architectural advantage among the full method and its ablations; repeated reruns reveal GPU training non-determinism severe enough to reverse an equity finding an earlier draft reported, traced to two distinct causes (non-deterministic scatter reduction and an unseeded environment reset) and fixed and verified, though not yet used to regenerate this paper's own tables, and the tabular RL baseline still outperforms ours on raw demand. On Ho Chi Minh City, an encoder ablation collapses to near-zero demand where the full method does not; warm-starting from Xi'an's trained policy shows genuine positive transfer at initialization and, under a reduced training budget, reaches non-trivial demand and consistently higher coverage than training from scratch -- direct evidence for the curriculum's sample-efficiency claim. Implementing the true radiation-model accessibility measure where real population data makes it computable finds it does not share the coverage proxy's architectural sensitivity, a construct-validity finding we report rather than smooth over.
+
+\vspace{1em}
+\noindent
+\textbf{Keywords:} metro network expansion; reinforcement learning; graph neural networks; multi-objective optimization; social equity; transfer learning
+
+\vspace{2em}
+\noindent
+\textbf{CRediT authorship contribution statement}
+
+\noindent
+\textbf{Quang-Vinh Dang}: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing -- original draft, Writing -- review \& editing.
+
+\vspace{1em}
+\noindent
+\textbf{Declaration of competing interest}
+
+\noindent
+The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\vspace{1em}
+\noindent
+\textbf{Funding}
+
+\noindent
+This work received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
+
+\vspace{1em}
+\noindent
+\textbf{Data availability}
+
+\noindent
+All code described in this paper -- the GNN encoder, multi-objective policy, training scripts for both cities, evaluation and figure-generation scripts, and the full test suite -- is publicly available now, not embargoed until publication, at \url{https://github.com/vinhqdang/metro_expansion}. Third-party data sources (Michailidis et al.'s \texttt{mo-tndp}, the CityScope/MIT \texttt{CSL\_HCMC} repository, and \texttt{GZUPA/subway-traffic-data-set}) are cited and documented in the manuscript's Data availability statement. This repository URL is withheld from the anonymized manuscript itself, since the account name identifies the author; it is provided here for the editor's and reviewers' use during evaluation.
+
+\end{document}

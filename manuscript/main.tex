@@ -1,17 +1,30 @@
-% Transportation Research Part C: Emerging Technologies (Elsevier) template:
-% elsarticle class, elsarticle-num (numbered) bibliography style. Converted from
-% the svjour3/spbasic template used for the Computational Economics attempt,
-% which the review panel concluded was a scope-fit mismatch (see review notes);
-% before that, from the Springer Nature sn-jnl/Vancouver-numbered template used
-% for the original Railway Engineering Science submission.
+% Transportation Research Part B: Methodological (Elsevier) template: elsarticle
+% class, author-year bibliography style. Retargeted after Transportation
+% Research Part C: Emerging Technologies did not proceed; before that, from the
+% svjour3/spbasic template used for the Computational Economics attempt, which
+% the review panel concluded was a scope-fit mismatch (see review notes); before
+% that, from the Springer Nature sn-jnl/Vancouver-numbered template used for the
+% original Railway Engineering Science submission.
 
-% Note: TRC's own reference guide names elsarticle-num (numbered) as its house
-% citation style, but this manuscript's prose relies heavily on \citeauthor (named
+% Note: Elsevier's elsarticle-num (numbered) style is the more common house
+% default, but this manuscript's prose relies heavily on \citeauthor (named
 % in-text citations, e.g. "\citeauthor{su2024}'s spatial representation"), which
 % elsarticle-num.bst does not support under natbib. Using author-year instead --
-% both are officially supported elsarticle configurations -- to keep the prose
-% correct; swap to [number] + elsarticle-num.bst at production stage if required.
-\documentclass[authoryear,preprint,12pt]{elsarticle}
+% both are officially supported elsarticle configurations, and Part B's own
+% guide for authors accepts either -- to keep the prose correct; swap to
+% [number] + elsarticle-num.bst at production stage if required.
+
+% Part B runs double-anonymized (double-blind) peer review. The `doubleblind`
+% class option below is elsarticle's built-in mechanism for this: it suppresses
+% \author/\ead/\affiliation (and footnotes/highlights) from the rendered PDF
+% while leaving them in the source, so the same file compiles to both the
+% blinded submission and (by dropping the option) the final, credited version.
+% It does NOT blind free-text sections written by hand -- the CRediT authorship
+% statement and the Data availability statement further down have been
+% manually anonymized for the same reason; see titlepage.tex for the
+% unblinded author/affiliation/acknowledgements/data-link information Elsevier
+% requires as a separate title-page upload.
+\documentclass[doubleblind,authoryear,preprint,12pt]{elsarticle}
 
 \usepackage{graphicx}%
 \usepackage{multirow}%
@@ -33,7 +46,7 @@
 \usepackage{url}%
 %%%%
 
-\journal{Transportation Research Part C: Emerging Technologies}
+\journal{Transportation Research Part B: Methodological}
 
 %% as per the requirement new theorem styles can be included as shown below
 \theoremstyle{plain}%
@@ -554,7 +567,7 @@ That reading generates a concrete, near-term roadmap rather than an open-ended o
 
 \section*{CRediT authorship contribution statement}
 
-\textbf{Quang-Vinh Dang}: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing -- original draft, Writing -- review \& editing.
+The author was responsible for all listed contribution roles: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing -- original draft, Writing -- review \& editing. (Author name withheld for double-anonymized review; see separate title page.)
 
 \section*{Declaration of competing interest}
 
@@ -562,11 +575,11 @@ The author declares that he has no known competing financial interests or person
 
 \section*{Data availability}
 
-The Xi'an OD grid, existing-line geometry, and price-group data are from \citet{michailidis2026}'s public, MIT-licensed \texttt{mo-tndp} code release (\url{https://github.com/sias-uva/mo-tndp}), redistributed unmodified as a git submodule in the project repository. The Ho Chi Minh City shapefiles (metro, bus, 2018 household-travel-survey OD, population, POI, census) are from the CityScope/MIT Media Lab \texttt{CSL\_HCMC} repository (\url{https://github.com/CityScope/CSL_HCMC}), which carries no explicit license; per that repository's terms we treat it as research/fair-use only and do not redistribute the underlying files ourselves, but link to the original source and document the exact files used in \texttt{docs/data\_sources.md}. Xi'an and Chengdu network-geometry shapefiles are from the openly licensed \texttt{GZUPA/subway-traffic-data-set} (\url{https://github.com/GZUPA/subway-traffic-data-set}), also redistributed as a submodule. All derived/preprocessed artifacts our own pipeline produces from these sources (Section~\ref{sec:data}) are regenerable from the code and data sources above via the scripts in the project repository. All code described in this paper -- the GNN encoder, multi-objective policy, training scripts for both cities, evaluation and figure-generation scripts, and the full test suite -- is publicly available now, not embargoed until publication, at \url{https://github.com/vinhqdang/metro_expansion}.
+The Xi'an OD grid, existing-line geometry, and price-group data are from \citet{michailidis2026}'s public, MIT-licensed \texttt{mo-tndp} code release (\url{https://github.com/sias-uva/mo-tndp}), redistributed unmodified as a git submodule in the project repository. The Ho Chi Minh City shapefiles (metro, bus, 2018 household-travel-survey OD, population, POI, census) are from the CityScope/MIT Media Lab \texttt{CSL\_HCMC} repository (\url{https://github.com/CityScope/CSL_HCMC}), which carries no explicit license; per that repository's terms we treat it as research/fair-use only and do not redistribute the underlying files ourselves, but link to the original source and document the exact files used in \texttt{docs/data\_sources.md}. Xi'an and Chengdu network-geometry shapefiles are from the openly licensed \texttt{GZUPA/subway-traffic-data-set} (\url{https://github.com/GZUPA/subway-traffic-data-set}), also redistributed as a submodule. All derived/preprocessed artifacts our own pipeline produces from these sources (Section~\ref{sec:data}) are regenerable from the code and data sources above via the scripts in the project repository. All code described in this paper -- the GNN encoder, multi-objective policy, training scripts for both cities, evaluation and figure-generation scripts, and the full test suite -- is publicly available now, not embargoed until publication; the repository's own URL is withheld from this anonymized manuscript because it identifies the author, and is provided instead on the separate title page for the editor's and reviewers' use.
 
 \section*{Acknowledgements}
 
-This work received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
+Removed for double-anonymized review; see separate title page.
 
 \begin{appendices}
 \counterwithin*{table}{section}
