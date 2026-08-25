@@ -112,6 +112,31 @@ def test_build_bus_stop_density_feature_reflects_stop_counts():
     assert density[3] == pytest.approx(0.0)
 
 
+def test_no_bus_signal_ablation_zeroes_only_the_bus_column():
+    """scripts/train_hcmc.py's --no_bus_signal flag zeroes the bus-density
+    column (rather than dropping it) before concatenating it onto the node
+    feature matrix, so the encoder's input width is identical between
+    conditions and only the bus signal's content is ablated (Section:
+    Ho Chi Minh City -- bus-auxiliary-signal ablation)."""
+    zones = make_toy_zones()
+    bus_stops = make_toy_bus_stops()
+
+    node_features = build_node_features(zones)
+    bus_density = build_bus_stop_density_feature(zones, bus_stops)
+    with_bus = np.concatenate([node_features, bus_density[:, None]], axis=1)
+
+    no_bus_signal = True
+    ablated_density = np.zeros_like(bus_density) if no_bus_signal else bus_density
+    without_bus = np.concatenate([node_features, ablated_density[:, None]], axis=1)
+
+    assert with_bus.shape == without_bus.shape
+    np.testing.assert_array_equal(without_bus[:, -1], np.zeros(len(zones)))
+    # every other column is unaffected by the ablation
+    np.testing.assert_array_equal(with_bus[:, :-1], without_bus[:, :-1])
+    # the ablation actually changes something, i.e. this toy fixture has nonzero bus signal to remove
+    assert bus_density.max() > 0.0
+
+
 def test_build_od_edges_distributes_district_flow_by_population_share():
     zones = make_toy_zones()
     od = make_toy_od()

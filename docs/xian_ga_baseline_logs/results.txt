@@ -1,0 +1,6 @@
+seed=42 generations=50 pop=100 best_demand_pct=2.26736 wall_s=308.3
+seed=1  generations=50 pop=100 best_demand_pct=2.33947 wall_s=300.9
+seed=2  generations=50 pop=100 best_demand_pct=2.63971 wall_s=301.9
+seed=3  generations=50 pop=100 best_demand_pct=2.30974 wall_s=301.8
+seed=7  generations=50 pop=100 best_demand_pct=2.33299 wall_s=311.6
+mean=2.37785 sample_std=0.14908 (ddof=1, n=5)
