@@ -1,0 +1,38 @@
+/opt/miniconda3/envs/py313/lib/python3.13/site-packages/pygame/pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import resource_stream, resource_exists
+device: cpu
+episode 0: demand=0.00225 equity=0.6384 coverage=0.1165 loss=0.5832
+episode 20: demand=0.00389 equity=0.5449 coverage=0.1390 loss=-0.0098
+episode 40: demand=0.00457 equity=0.4979 coverage=0.1407 loss=-0.0594
+episode 60: demand=0.00313 equity=0.5178 coverage=0.1209 loss=0.1417
+episode 80: demand=0.00306 equity=0.4757 coverage=0.1267 loss=-0.0850
+episode 100: demand=0.00358 equity=0.5514 coverage=0.1303 loss=0.0334
+episode 120: demand=0.00371 equity=0.4749 coverage=0.1354 loss=-0.2253
+episode 140: demand=0.00474 equity=0.6298 coverage=0.1271 loss=-0.3554
+episode 160: demand=0.00394 equity=0.5672 coverage=0.1390 loss=-0.2053
+episode 180: demand=0.00356 equity=0.5445 coverage=0.1203 loss=0.5861
+episode 200: demand=0.00388 equity=0.6449 coverage=0.1315 loss=-0.0873
+episode 220: demand=0.00253 equity=0.5184 coverage=0.1064 loss=-0.4577
+episode 240: demand=0.00378 equity=0.6277 coverage=0.1390 loss=0.1403
+episode 260: demand=0.00421 equity=0.4299 coverage=0.1339 loss=-0.3418
+episode 280: demand=0.00508 equity=0.5433 coverage=0.1347 loss=0.0885
+episode 300: demand=0.00303 equity=0.5005 coverage=0.1262 loss=-0.1449
+episode 320: demand=0.00246 equity=0.6576 coverage=0.1129 loss=-0.1072
+episode 340: demand=0.00446 equity=0.4688 coverage=0.1296 loss=-0.0021
+episode 360: demand=0.00399 equity=0.5438 coverage=0.1193 loss=0.6827
+episode 380: demand=0.00218 equity=0.4984 coverage=0.1143 loss=-0.2636
+episode 400: demand=0.00429 equity=0.5614 coverage=0.1347 loss=0.1621
+episode 420: demand=0.00287 equity=0.5658 coverage=0.1309 loss=-0.3282
+episode 440: demand=0.00440 equity=0.5123 coverage=0.1406 loss=-0.2384
+episode 460: demand=0.00335 equity=0.4563 coverage=0.1251 loss=0.0917
+episode 480: demand=0.00391 equity=0.4857 coverage=0.1338 loss=0.4304
+episode 499: demand=0.00290 equity=0.5953 coverage=0.1058 loss=0.2724
+
+training done in 23.5s
+FINAL (greedy eval, w=uniform (1/3,1/3,1/3)): demand=0.00705 equity=0.5106 coverage=0.1712 actions=[2, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 2]
+FINAL (greedy eval, w=demand-only (1,0,0)): demand=0.00000 equity=1.0000 coverage=0.0440 actions=[5, 4, 4, 5, 4]
+FINAL (greedy eval, w=equity-only (0,1,0)): demand=0.00877 equity=0.5561 coverage=0.1665 actions=[2, 1, 0, 1, 2, 1, 1, 0, 0, 1, 0, 0, 0, 2, 2, 2, 2, 2, 2]
+FINAL (greedy eval, w=coverage-only (0,0,1)): demand=0.00695 equity=0.5114 coverage=0.1807 actions=[2, 1, 0, 1, 0, 1, 0, 0, 1, 1, 2, 1, 2, 2, 2, 1, 0, 2, 1]
+
+weight-conditioning sanity check: results are NOT identical across all 4 weight settings (policy responds to w as designed)
+wall_clock_s=23.5 episodes=500
