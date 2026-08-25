@@ -24,6 +24,26 @@ Research code and manuscript for a submission to [*Transportation Research Part 
    Data availability sections (the project's own GitHub URL identifies the author and is
    withheld from the blinded manuscript); a separate `manuscript/titlepage.tex`/`.pdf`
    carries the real author, affiliation, and repository link for editor/reviewer use.
+5. A five-reviewer simulated review panel against the Part B target (2026-08-25; EIC + 3
+   peer reviewers + Devil's Advocate) split: EIC and Devil's Advocate recommended Reject on
+   venue-fit/evidentiary-completeness grounds (the paper's one head-to-head result loses to
+   a simpler baseline; only 2 of 4 planned cities done); the methodology, domain, and
+   perspective reviewers recommended Major Revision with concrete, actionable fixes.
+   Editorial synthesis: Major Revision (last chance), gated on either bringing in the
+   Chengdu result or holding the Part B attempt. Not persisted as a separate file (session
+   history). Acted on immediately: moved the "exploratory tool, not decision-support
+   system" framing into the abstract/intro; flagged the price-band equity metric's
+   circularity at its definition; added exact sign-test stats to the curriculum claim;
+   independently re-verified the tabular RL baseline from scratch (reproduces exactly);
+   regenerated Table 1 under the deterministic-training fix that had been implemented but
+   never applied (new numbers disagree with both predecessors on which architecture leads
+   -- reported as the finding itself, not smoothed over); added a classical genetic-algorithm
+   baseline (already in Michailidis et al.'s own code release, previously unused) that
+   **beats every RL method in the paper, including ours**; and ablated the bus-signal claim
+   (substantiated, narrower than originally stated -- demand only, 5/5 seeds). Raw logs for
+   all new experiments are under `docs/xian_deterministic_regen_logs/`,
+   `docs/xian_ga_baseline_logs/`, and `docs/hcmc_bus_ablation_logs/`. Chengdu/Hanoi and the
+   remaining tables' deterministic regeneration are still open (Future Work).
 
 ## Layout
 
