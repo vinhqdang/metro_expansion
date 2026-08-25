@@ -1,0 +1,35 @@
+device: cpu
+HCMC graph: 322 zones, 1914 contiguity edges, 13042 OD edges
+episode 0 (ran 1): demand=0.00000 equity=1.0000 coverage=0.2081 loss=-0.0973
+episode 20 (ran 21): demand=0.00691 equity=0.7766 coverage=0.1918 loss=0.1528
+episode 40 (ran 41): demand=0.00104 equity=0.8744 coverage=0.2053 loss=0.2123
+episode 60 (ran 61): demand=0.00394 equity=0.8620 coverage=0.2124 loss=-0.0231
+episode 80 (ran 81): demand=0.00092 equity=0.9759 coverage=0.1943 loss=-0.2474
+episode 100 (ran 101): demand=0.00179 equity=0.9352 coverage=0.1793 loss=0.0344
+episode 120 (ran 121): demand=0.00007 equity=0.9748 coverage=0.2183 loss=-0.1306
+episode 140 (ran 141): demand=0.00385 equity=0.7611 coverage=0.2143 loss=0.1711
+episode 160 (ran 161): demand=0.01039 equity=0.8016 coverage=0.2180 loss=0.1087
+episode 180 (ran 181): demand=0.00327 equity=0.7781 coverage=0.2203 loss=0.0211
+episode 200 (ran 201): demand=0.00469 equity=0.8489 coverage=0.1902 loss=-0.1406
+episode 220 (ran 221): demand=0.00147 equity=0.9236 coverage=0.2241 loss=-0.0143
+episode 240 (ran 241): demand=0.00312 equity=0.7452 coverage=0.2042 loss=0.0600
+episode 260 (ran 261): demand=0.00285 equity=0.7387 coverage=0.2362 loss=0.1738
+episode 280 (ran 281): demand=0.00492 equity=0.8165 coverage=0.2250 loss=-0.2478
+episode 300 (ran 301): demand=0.00336 equity=0.8083 coverage=0.2435 loss=-0.2930
+episode 320 (ran 321): demand=0.00092 equity=0.8288 coverage=0.2472 loss=-0.0238
+episode 340 (ran 341): demand=0.01124 equity=0.7713 coverage=0.2587 loss=0.2896
+episode 360 (ran 361): demand=0.01001 equity=0.7835 coverage=0.2337 loss=-0.0175
+episode 380 (ran 381): demand=0.00883 equity=0.7223 coverage=0.2413 loss=-0.0468
+episode 400 (ran 401): demand=0.01605 equity=0.7289 coverage=0.2466 loss=-0.0402
+episode 420 (ran 421): demand=0.01747 equity=0.5962 coverage=0.2565 loss=0.1835
+episode 440 (ran 441): demand=0.01015 equity=0.6916 coverage=0.2301 loss=-0.0630
+episode 460 (ran 461): demand=0.01584 equity=0.7539 coverage=0.2700 loss=-0.0862
+episode 480 (ran 481): demand=0.00427 equity=0.8068 coverage=0.2634 loss=0.0204
+episode 499 (ran 500): demand=0.00685 equity=0.8105 coverage=0.2573 loss=-0.0092
+
+training done in 3.4s (500 non-degenerate episodes out of 500)
+FINAL (greedy eval over 5 starts, w=uniform (1/3,1/3,1/3)): demand=0.04294 equity=0.7280 coverage=0.2609
+FINAL (greedy eval over 5 starts, w=demand-only (1,0,0)): demand=0.04294 equity=0.7280 coverage=0.2609
+FINAL (greedy eval over 5 starts, w=equity-only (0,1,0)): demand=0.04294 equity=0.7280 coverage=0.2609
+FINAL (greedy eval over 5 starts, w=coverage-only (0,0,1)): demand=0.04294 equity=0.7280 coverage=0.2609
+wall_clock_s=3.4 episodes=500

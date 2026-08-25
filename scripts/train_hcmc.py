@@ -86,17 +86,27 @@ def gini(x: np.ndarray) -> float:
     return float((n + 1 - 2 * np.sum(cum) / cum[-1]) / n)
 
 
-def build_graph_and_env_data(device: torch.device):
+def build_graph_and_env_data(device: torch.device, no_bus_signal: bool = False):
     """Loads real HCMC data and builds everything the training loop needs:
     node features, spatial/OD edges (for the GNN), an adjacency list (for
     the action space), an OD adjacency list (for reward computation), and
-    per-zone income-bracket assignment (for equity)."""
+    per-zone income-bracket assignment (for equity).
+
+    no_bus_signal: zeroes the bus-stop-density feature column rather than
+    dropping it, so the feature vector's dimensionality (and therefore the
+    encoder's input layer) is identical between conditions -- isolating the
+    marginal value of the bus signal itself, not confounding it with a
+    changed input width. Ablation added to test Contribution 3's claim that
+    the bus-network auxiliary signal is doing real work (domain reviewer).
+    """
     zones = load_zones(DATA_DIR)
     bus_stops = load_bus_stops(DATA_DIR)
     od = load_od_survey(DATA_DIR)
 
     node_features_np = build_node_features(zones)
     bus_density = build_bus_stop_density_feature(zones, bus_stops)
+    if no_bus_signal:
+        bus_density = np.zeros_like(bus_density)
     node_features_np = np.concatenate([node_features_np, bus_density[:, None]], axis=1)
 
     spatial_ei, spatial_ew = build_contiguity_edges(zones)
@@ -266,6 +276,10 @@ def main():
         "--init_from_xian", type=str, default=None, help="Path to a Xi'an checkpoint (.pt) to warm-start from"
     )
     parser.add_argument("--save_checkpoint", type=str, default=None)
+    parser.add_argument(
+        "--no_bus_signal", action="store_true", default=False,
+        help="Zero the bus-stop-density auxiliary feature (ablation testing Contribution 3's claim)"
+    )
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
@@ -274,7 +288,9 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"device: {device}")
 
-    graph, contiguity_adj, od_adj, total_od, income_bracket, n = build_graph_and_env_data(device)
+    graph, contiguity_adj, od_adj, total_od, income_bracket, n = build_graph_and_env_data(
+        device, no_bus_signal=args.no_bus_signal
+    )
     in_dim = graph[0].shape[1]
     print(f"HCMC graph: {n} zones, {graph[1].shape[1]} contiguity edges, {graph[3].shape[1]} OD edges")
 

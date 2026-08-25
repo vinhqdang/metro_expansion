@@ -1,0 +1,26 @@
+Bus-auxiliary-signal ablation, `full` method, Ho Chi Minh City, CPU, 5 seeds (1, 2, 3, 7, 42).
+Command: python scripts/train_hcmc.py --train_episodes 500 --nr_stations 20 --seed <SEED> --ablation full [--no_bus_signal]
+
+With bus signal (uniform-weight greedy eval):
+  seed=42 demand=4.294 equity=0.7280 coverage=0.2609
+  seed=1  demand=0.702 equity=0.9119 coverage=0.2422
+  seed=2  demand=0.696 equity=0.8659 coverage=0.2689
+  seed=3  demand=5.724 equity=0.8397 coverage=0.2720
+  seed=7  demand=0.083 equity=0.8962 coverage=0.2354
+  mean: demand=2.300 +/- 2.537, equity=0.848 +/- 0.073, coverage=0.256 +/- 0.016 (sample std, n=5)
+
+Without bus signal (uniform-weight greedy eval):
+  seed=42 demand=1.095 equity=0.5319 coverage=0.2733
+  seed=1  demand=0.000 equity=1.0000 coverage=0.2453
+  seed=2  demand=0.000 equity=1.0000 coverage=0.2292
+  seed=3  demand=0.002 equity=0.6171 coverage=0.2652
+  seed=7  demand=0.022 equity=0.8605 coverage=0.2677
+  mean: demand=0.224 +/- 0.487, equity=0.802 +/- 0.217, coverage=0.256 +/- 0.018 (sample std, n=5)
+
+Demand: with-bus > without-bus in 5/5 seeds. Exact one-sided sign test p = 0.5^5 = 0.03125.
+Equity: no-bus wins 3/5 seeds (no consistent direction).
+Coverage: split 2-3, essentially identical means.
+
+Not comparable in absolute magnitude to manuscript Table `tab:hcmc-results` (a separate,
+earlier non-deterministic-GPU run) -- this ablation was run fresh on CPU for this
+comparison specifically.
