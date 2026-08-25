@@ -26,6 +26,46 @@ for `SEED` in `{42, 1, 2, 3, 7}`. `WANDB_MODE=offline` avoids needing a wandb ac
 
 **Independent re-verification (2026-08-25):** re-ran all 5 seeds from a fresh clone and re-derived the demand figure from scratch via a standalone script (`docs/xian_deterministic_regen_logs/`) that loads each seed's saved Q-table and rolls out its own greedy policy, using its own accumulation of the environment's per-group reward vector -- not by calling or trusting `QLearningTNDP.test()` at all. All 5 seeds reproduced exactly: 42: 1.8365, 1: 1.5520, 2: 1.8878, 3: 0.7830, 7: 0.7499 (mean 1.3618). This also surfaced a labeling nuance worth recording here in full since the manuscript only summarizes it: "Demand (%)" as reported by `calculate_reward('max_efficiency')` (`reward.sum() * 100`) is the *sum* of 5 already-normalized per-group percentages, not a single demand-mass-weighted city-wide percentage -- e.g. for seed 42's rollout, the true weighted-average percentage (using `city.group_od_sum` to un-normalize and re-aggregate) is 0.362%, versus the reported sum-of-fractions figure of 1.836% (roughly the number of groups apart). `scripts/train_xian.py` computes "Demand (%)" via the identical sum-of-group-fractions convention (`reward_vector.sum()`, inherited from the same environment), so the tabular-vs-GNN *comparison* in the manuscript's Table 1 is unaffected (both sides use the same definition) -- only the absolute number's literal interpretation needed this clarification.
 
+## Genetic algorithm baseline (also Michailidis et al.'s code release)
+
+`external/tabular-tndp/ga_tndp.py` / `run_ga.py` ship a genetic algorithm for the same
+MO-TNDP problem (roulette-wheel selection, single-point crossover over candidate lines),
+supporting `--env xian` directly. Not used anywhere in this project before 2026-08-25,
+added to `manuscript/main.tex` Table 1 in response to the domain reviewer's observation
+that every prior baseline was an RL method, leaving out the classical TNDP literature
+(Section~2.1) that is the field's actual deployed alternative.
+
+**Instrumentation added** (`ga_tndp.py`'s `run()`, not an upstream bug fix): the method
+never returns or stores `best_episode_reward`/`best_episode_cells` outside its own local
+scope, and only exposes them via `wandb.log`, which is unhelpful when running offline.
+Added `self.best_episode_reward = ...` / `self.best_episode_cells = ...` assignments
+inside the per-generation loop so a driver script can read the result after `.run()`
+returns.
+
+**Second upstream `--no_log` wiring bug found**, distinct from `qlearning_tndp.py`'s
+already-documented one: `run()` calls `wandb.config['reward_type'] = reward_type`
+unconditionally (not guarded by `if self.log:`, unlike its other wandb calls), so it
+raises even with `log=False` unless `wandb.init()` has been called first. Worked around
+in `run_ga_eval.py` (below) via `wandb.init(mode="disabled")` rather than patching the
+library file, since `mode="disabled"` no-ops every wandb call without needing a real run.
+
+Reproduce (`docs/xian_ga_baseline_logs/run_ga_eval.py`, copied from
+`external/tabular-tndp/run_ga_eval.py`):
+```
+cd external/tabular-tndp
+python run_ga_eval.py <SEED> 50   # population 100, 50 generations (hardcoded default in run_one())
+```
+for `SEED` in `{42, 1, 2, 3, 7}`.
+
+**Results**: demand satisfied (%) per seed -- 42: 2.267, 1: 2.339, 2: 2.640, 3: 2.310,
+7: 2.333. Mean 2.378 ± 0.149 (n=5, sample std). Wall-clock ~300s/seed on CPU (no GPU
+needed, consistent with this method requiring none by design). This **beats both** the
+tabular RL baseline (1.36%) and all three of our GNN-based variants (0.16--0.61%) --
+reported in full in `docs/xian_ga_baseline_logs/results.txt`. Budget (population 100,
+50 generations = 10,100 environment rollouts total) was chosen for this revision's time
+constraints, not tuned for maximum GA performance; demand was still improving at the
+budget's end, so a larger budget would plausibly widen this gap further, not close it.
+
 ## Our method (full + 2 ablations)
 
 No external patching needed -- `scripts/train_xian.py` reuses the same cloned `external/tabular-tndp/envs/mo-tndp` environment mechanics (action masking, episode structure) but replaces their tabular Q-learning with our own GNN encoder + multi-objective actor-critic (`src/gnn`, `src/rl`).

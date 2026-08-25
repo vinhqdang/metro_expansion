@@ -1,9 +1,23 @@
 # Baselines
 
-Reimplementations of the three reference RL methods for MNEP, used for direct comparison in the manuscript's Experiments section:
+This directory was originally scaffolded for from-scratch reimplementations of the three
+reference RL methods (`metrognn/`, `zhang2024_multiobjective/`, `michailidis_tabular/`).
+None of these subdirectories were ever populated, and the manuscript does not use this
+route for any of its actual comparisons:
 
-- `metrognn/` -- Su et al., WWW'24 Companion (arXiv:2403.09197). Single-objective GNN policy.
-- `zhang2024_multiobjective/` -- Zhang et al., Transportation Research Part C (2024). Multi-objective actor-critic, no GNN.
-- `michailidis_tabular/` -- Michailidis et al. (arXiv:2606.04167). Tabular RL, NMRDP reformulation.
+- MetroGNN (su2024) and Zhang et al. (zhang2024) have no public code release, so the
+  manuscript instead uses two principled ablations of its own architecture
+  (`--ablation single_objective` / `--ablation flat_encoder` in `scripts/train_xian.py`
+  and `scripts/train_hcmc.py`) as stand-ins -- see the manuscript's Baselines subsection
+  for exactly what each ablation changes and why it approximates, not reproduces, the
+  corresponding paper.
+- Michailidis et al.'s tabular RL and genetic-algorithm baselines both have public code,
+  so the manuscript runs their own code release directly and unmodified (aside from one
+  documented upstream bug fix and one instrumentation addition) rather than
+  reimplementing either -- see `docs/baseline_reproduction.md` for exact setup, the
+  patches applied, and reproduction commands.
 
-Not yet implemented -- see `docs/superpowers/specs/2026-08-18-metro-expansion-manuscript-design.md` §5 (Experimental Design) for what each baseline needs to reproduce.
+This directory's three empty subdirectories are accordingly a stale, unused scaffold
+from an earlier planning pass, not work in progress; see
+`docs/superpowers/specs/2026-08-18-metro-expansion-manuscript-design.md` §5 for the
+original design rationale if reviving them is ever useful.
