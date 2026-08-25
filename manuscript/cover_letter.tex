@@ -38,21 +38,26 @@ journal's double-anonymized review policy, the manuscript file has been anonymiz
 (author name, affiliation, and identifying data-repository link removed or withheld) and
 author-identifying information is instead provided on the accompanying title page.
 
-The paper addresses the Metro Network Expansion Problem (MNEP): given an existing rail
-network and a limited construction budget, decide which stations or line segments to add
-next. Three recent papers have each taken a piece of this idea and shown it works --
-a GNN-based spatial state representation (MetroGNN), a fairness-aware multi-objective
-reward decomposed via Tchebycheff scalarization, and a tabular reinforcement-learning
-method that argues deep RL's overhead is unnecessary at this problem's scale -- but no
-method combines the first two, and none has been tested from small, data-sparse emerging
-metro systems to the largest networks in the world. We propose a GNN-based,
-multi-objective actor-critic policy that combines a heterogeneous spatial-graph encoder
-with a Tchebycheff-scalarized reward over demand, equity, and accessibility, condition
-the policy itself on the sampled objective-weight vector so one trained model spans the
-full efficiency-equity trade-off surface, and add a cross-city curriculum-transfer
-mechanism -- pretraining on one city's network and warm-starting another's -- that
-responds directly to the training-cost critique of GNN-based methods without abandoning
-the GNN.
+The paper addresses the Metro Network Expansion Problem (MNEP), the rail-specific case of
+the Transport Network Design Problem (TNDP) this journal has published on for decades:
+given an existing rail network and a limited construction budget, decide which stations
+or line segments to add next. Classical TNDP solution methods -- mixed-integer and
+bilevel programming, genetic algorithms, tabu search, ant colony optimization -- buy
+tractability by fixing candidate corridors or line counts by hand before optimization
+begins. Reformulating MNEP as a sequential decision process solvable by reinforcement
+learning removes that pre-constraint, and three recent papers have each taken a piece of
+that reformulation and shown it works: a GNN-based spatial state representation
+(MetroGNN), a fairness-aware multi-objective reward decomposed via Tchebycheff
+scalarization, and a tabular reinforcement-learning method that argues deep RL's overhead
+is unnecessary at this problem's scale. No method combines the first two, and none has
+been tested from small, data-sparse emerging metro systems to the largest networks in the
+world. We propose a GNN-based, multi-objective actor-critic policy that combines a
+heterogeneous spatial-graph encoder with a Tchebycheff-scalarized reward over demand,
+equity, and accessibility, condition the policy itself on the sampled objective-weight
+vector so one trained model spans the full efficiency-equity trade-off surface, and add a
+cross-city curriculum-transfer mechanism -- pretraining on one city's network and
+warm-starting another's -- that responds directly to the training-cost critique of
+GNN-based methods without abandoning the GNN.
 
 The paper's contribution is threefold: (1) the first MNEP method to combine GNN spatial
 representation with multi-objective fairness decomposition in a single policy; (2) a
