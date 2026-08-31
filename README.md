@@ -44,6 +44,14 @@ Research code and manuscript for a submission to [*Transportation Research Part 
    all new experiments are under `docs/xian_deterministic_regen_logs/`,
    `docs/xian_ga_baseline_logs/`, and `docs/hcmc_bus_ablation_logs/`. Chengdu/Hanoi and the
    remaining tables' deterministic regeneration are still open (Future Work).
+6. Actual Part B editorial decision received (2026-08-31): rejected at the journal's
+   initial-review stage ("could be potentially interesting to a number of journals but...
+   not deemed to be the best fit with Part B"), with no reviewer-specific comments attached
+   -- a suitability/venue-fit desk reject, not a peer-review outcome. This confirms the
+   EIC/Devil's Advocate branch of the step-5 simulated panel rather than the methodology/
+   domain/perspective branch's Major Revision path. The step-3 candidate (*Transportation
+   Research Part C*) remains the panel-identified natural fit requiring no reframing; not
+   yet acted on.
 
 ## Layout
 
