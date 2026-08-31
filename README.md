@@ -16,7 +16,11 @@ Research code and manuscript for a submission to [*Transportation Research Part 
    this project's session history (2026-08-22); not persisted as a separate file.
 3. Retargeted again, to *Transportation Research Part C* -- the venue the review panel
    identified as the actual natural fit for the paper's real content (AI/ML/RL methods
-   applied to transportation network design), requiring no reframing. Not proceeded with.
+   applied to transportation network design), requiring no reframing. Submitted, and
+   desk-rejected there too, with no reason given -- the same pattern later repeated at
+   Part B (step 6). (Note: `manuscript/main.tex`'s header comment previously stated this
+   attempt "did not proceed"; that comment predates confirmation of the actual rejection
+   and is stale -- corrected here.)
 4. Retargeted again, to *Transportation Research Part B* (same Elsevier `elsarticle`
    template as the Part C attempt, no format change needed) and converted to
    double-anonymized (double-blind) submission format (2026-08-25): `main.tex` now uses
@@ -49,9 +53,13 @@ Research code and manuscript for a submission to [*Transportation Research Part 
    not deemed to be the best fit with Part B"), with no reviewer-specific comments attached
    -- a suitability/venue-fit desk reject, not a peer-review outcome. This confirms the
    EIC/Devil's Advocate branch of the step-5 simulated panel rather than the methodology/
-   domain/perspective branch's Major Revision path. The step-3 candidate (*Transportation
-   Research Part C*) remains the panel-identified natural fit requiring no reframing; not
-   yet acted on.
+   domain/perspective branch's Major Revision path. Both Elsevier Transportation Research
+   venues tried so far (Part C, Part B) have now desk-rejected the paper without a
+   substantive reason. Decision (2026-08-31): stop targeting the Transportation Research
+   family; retarget to a Q1/Q2 journal (SJR/JCR) in the transportation/AI-for-transportation
+   space with no mandatory submission fee and no mandatory APC (subscription or hybrid
+   model, not gold/mandatory-OA) for the next attempt. Candidate list to be researched and
+   recorded before the next retarget.
 
 ## Layout
 
