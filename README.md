@@ -1,6 +1,6 @@
 # metro_expansion
 
-Research code and manuscript for a submission to [*Transportation Research Part B: Methodological*](https://www.sciencedirect.com/journal/transportation-research-part-b-methodological) (Elsevier): a GNN-based, multi-objective reinforcement learning method for urban rail transit network expansion, evaluated across multiple Asian cities (Hanoi, Ho Chi Minh City, Xi'an, Chengdu, extensible to more).
+Research code and manuscript for a submission to [*Transportmetrica B: Transport Dynamics*](https://www.tandfonline.com/journals/ttrb20) (Taylor & Francis): a GNN-based, multi-objective reinforcement learning method for urban rail transit network expansion, evaluated across multiple Asian cities (Hanoi, Ho Chi Minh City, Xi'an, Chengdu, extensible to more).
 
 **Submission history:**
 1. Originally targeted at *Railway Engineering Science* (Springer / Southwest Jiaotong
@@ -60,31 +60,46 @@ Research code and manuscript for a submission to [*Transportation Research Part 
    space with no mandatory submission fee and no mandatory APC (subscription or hybrid
    model, not gold/mandatory-OA) for the next attempt. Candidate list to be researched and
    recorded before the next retarget.
+7. Retargeted to *Transportmetrica B: Transport Dynamics* (Taylor & Francis) (2026-08-31),
+   selected from a verified shortlist (Q2, JCR 2025 IF 4.2; hybrid Open Select publishing,
+   no mandatory submission fee or APC) over Transportmetrica A, Transportation Science, and
+   IEEE T-ITS. The strongest signal for this specific choice: this journal already
+   published Holliday, El-Geneidy, and Dudek (2025), "Learning heuristics for transit
+   network design and improvement with deep reinforcement learning" -- a GNN+RL
+   transit-network-design paper closely matching this manuscript's own method and domain --
+   which is closer to a demonstrated-fit precedent than either Transportation Research venue
+   had going in. Unlike Part B, Transportmetrica B runs single-anonymized review (reviewer
+   anonymous to author; author identity visible to the reviewer), so the double-blind
+   anonymization apparatus from step 4 was reverted rather than carried forward. Converted
+   `manuscript/main.tex` from Elsevier's `elsarticle` to Taylor & Francis's `interact`
+   class with the `tfcad.bst` Chicago author-date bibliography style (the
+   `interactcadlatex` bundle, T&F's official LaTeX template for this journal), restored
+   the real author/CRediT/data-availability content in place of the anonymized versions,
+   added the newly-required Funding and Declaration of generative AI use sections, moved
+   References ahead of the Appendices to match the journal's stated section order, and
+   condensed the abstract from 409 words to ~160 to approach the journal's 150-word
+   guideline (still not exact-compliant; a further tightening pass is open). Removed the
+   now-unused Elsevier (`elsarticle.cls`/`elsarticle-harv.bst`), double-blind
+   (`titlepage.tex`/`.pdf`), and long-stale Springer Nature (`bst/`, `template/`) files.
+   Compiles cleanly (`pdflatex` x3 + `bibtex`) to a 50-page PDF with no undefined
+   references. **Open item, not resolved by this retarget:** the main text (Introduction
+   through Conclusion, excluding tables/figures/references) runs to roughly 14,200 words
+   against the journal's stated typical limit of 10,000 -- a genuine editorial-cut task,
+   flagged in the cover letter and in `main.tex`'s header comment, not attempted here.
 
 ## Layout
 
-- `manuscript/` -- LaTeX manuscript (`main.tex`), separate anonymized `titlepage.tex`, and
-  `cover_letter.tex`, on Elsevier's `elsarticle` class (author-year mode:
-  `\documentclass[doubleblind,authoryear,preprint,12pt]{elsarticle}`, `elsarticle-harv.bst`).
-  Author-year rather than Part B's more common house numbered style (`elsarticle-num`)
-  because the manuscript's prose relies heavily on named in-text citations
-  (`\citeauthor{su2024}`-style), which `elsarticle-num.bst` does not resolve under natbib;
-  swap to `[number]` + `elsarticle-num.bst` at production stage if the journal requires it.
-  `elsarticle.cls`/`elsarticle-harv.bst` here are the genuine, freely-redistributable
-  Elsevier files (via TeX Live), not a shim. Declarations sections (CRediT authorship,
-  competing interest, data availability, acknowledgements) follow Elsevier's standard
-  headings rather than Springer's itemized "Declarations" block.
-  **Double-anonymized submission format:** Part B runs double-blind review. `main.tex`'s
-  `[doubleblind]` class option suppresses `\author`/`\ead`/`\affiliation` from the rendered
-  PDF automatically, but does not touch free-text sections -- the CRediT statement (author
-  name withheld) and Data availability statement (project GitHub URL withheld, since it
-  encodes the author's name) are manually anonymized in the source. `titlepage.tex` is the
-  separate, unblinded file carrying the real author/affiliation/CRediT/data-link
-  information, uploaded alongside the anonymized manuscript per Elsevier's submission
-  requirements. **Still open before actual submission:** whether a Highlights file (3-5
-  bullet points) is required at the submission portal. Build each document independently
-  with `pdflatex <file>.tex && bibtex <file> && pdflatex <file>.tex && pdflatex <file>.tex`
-  (bibtex step only needed for `main.tex`) from within `manuscript/`.
+- `manuscript/` -- LaTeX manuscript (`main.tex`) and `cover_letter.tex`, on Taylor &
+  Francis's `interact` document class (Interact-CAD bundle: `interact.cls`, `tfcad.bst`
+  Chicago author-date bibliography style, both the genuine T&F-distributed files, not a
+  shim) per Transportmetrica B's LaTeX Instructions for Authors. Declarations sections
+  (CRediT authorship, Disclosure statement, Funding, Declaration of generative AI use,
+  Data availability) follow T&F's required headings; References are placed before the
+  Appendices per the journal's stated structure. Single-anonymized submission (see step 7
+  above): no author-identity suppression and no separate title-page file, unlike the
+  double-blind Elsevier attempt this replaced. Build with
+  `pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex` from within
+  `manuscript/` (`cover_letter.tex` needs only a single `pdflatex` pass, no bibliography).
 - `docs/superpowers/specs/` -- design spec for the project (research gap, contribution, method, case studies, experimental design).
 - `src/gnn/` -- heterogeneous graph state encoder (spatial-contiguity + OD-flow relations).
 - `src/rl/` -- multi-objective actor-critic policy, Tchebycheff reward scalarization, prioritized replay buffer.

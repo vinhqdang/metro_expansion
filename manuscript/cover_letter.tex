@@ -1,11 +1,11 @@
-% Cover letter for submission to Transportation Research Part B:
-% Methodological (Elsevier), which runs double-anonymized (double-blind) peer
-% review. This letter identifies the author, as intended -- it goes to the
-% editor only. main.tex now carries the `doubleblind` elsarticle class option
-% (which suppresses \author/\ead/\affiliation from the rendered PDF) plus
-% manual anonymization of the CRediT and Data availability sections; the
-% unblinded author/affiliation/data-link information is uploaded separately as
-% titlepage.tex/.pdf per Part B's submission requirements.
+% Cover letter for submission to Transportmetrica B: Transport Dynamics
+% (Taylor & Francis). This letter identifies the author, as intended -- it
+% goes to the editor only. Transportmetrica B runs single-anonymized peer
+% review (the reviewer is anonymous to the author; the author's identity is
+% visible to the reviewer, via ScholarOne), so -- unlike the previous
+% (Elsevier, double-blind) submission -- main.tex is not anonymized and there
+% is no separate title-page file; author name and affiliation appear directly
+% in the manuscript.
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{parskip}
@@ -25,7 +25,7 @@ Hung Yen, Vietnam\\
 \vspace{1em}
 \noindent
 To the Editors,\\
-\emph{Transportation Research Part B: Methodological}
+\emph{Transportmetrica B: Transport Dynamics}
 
 \vspace{1em}
 
@@ -33,31 +33,33 @@ Dear Editors,
 
 I am submitting the manuscript ``Fair and Transferable Graph Reinforcement Learning for
 Urban Rail Transit Network Expansion Across Asian Cities'' for consideration as a
-regular research article in \emph{Transportation Research Part B}. In line with the
-journal's double-anonymized review policy, the manuscript file has been anonymized
-(author name, affiliation, and identifying data-repository link removed or withheld) and
-author-identifying information is instead provided on the accompanying title page.
+regular research article in \emph{Transportmetrica B: Transport Dynamics}. This is a
+single-anonymized submission per the journal's policy; I understand the manuscript will
+be assessed for suitability by the editor and then reviewed by one independent, anonymous
+expert.
 
 The paper addresses the Metro Network Expansion Problem (MNEP), the rail-specific case of
-the Transport Network Design Problem (TNDP) this journal has published on for decades:
-given an existing rail network and a limited construction budget, decide which stations
-or line segments to add next. Classical TNDP solution methods -- mixed-integer and
-bilevel programming, genetic algorithms, tabu search, ant colony optimization -- buy
-tractability by fixing candidate corridors or line counts by hand before optimization
-begins. Reformulating MNEP as a sequential decision process solvable by reinforcement
-learning removes that pre-constraint, and three recent papers have each taken a piece of
-that reformulation and shown it works: a GNN-based spatial state representation
-(MetroGNN), a fairness-aware multi-objective reward decomposed via Tchebycheff
-scalarization, and a tabular reinforcement-learning method that argues deep RL's overhead
-is unnecessary at this problem's scale. No method combines the first two, and none has
-been tested from small, data-sparse emerging metro systems to the largest networks in the
-world. We propose a GNN-based, multi-objective actor-critic policy that combines a
-heterogeneous spatial-graph encoder with a Tchebycheff-scalarized reward over demand,
-equity, and accessibility, condition the policy itself on the sampled objective-weight
-vector so one trained model spans the full efficiency-equity trade-off surface, and add a
-cross-city curriculum-transfer mechanism -- pretraining on one city's network and
-warm-starting another's -- that responds directly to the training-cost critique of
-GNN-based methods without abandoning the GNN.
+the Transport Network Design Problem (TNDP): given an existing rail network and a limited
+construction budget, decide which stations or line segments to add next. Classical TNDP
+solution methods -- mixed-integer and bilevel programming, genetic algorithms, tabu
+search, ant colony optimization -- buy tractability by fixing candidate corridors or line
+counts by hand before optimization begins. Reformulating MNEP as a sequential decision
+process solvable by reinforcement learning removes that pre-constraint; this journal has
+itself recently published closely related work applying deep RL directly to transit
+network design and improvement (Holliday, El-Geneidy, and Dudek, 2025), which we take as
+a strong signal of fit for a methods contribution of this kind, and three further recent
+papers have each taken a piece of that reformulation and shown it works: a GNN-based
+spatial state representation (MetroGNN), a fairness-aware multi-objective reward
+decomposed via Tchebycheff scalarization, and a tabular reinforcement-learning method that
+argues deep RL's overhead is unnecessary at this problem's scale. No method combines the
+first two, and none has been tested from small, data-sparse emerging metro systems to the
+largest networks in the world. We propose a GNN-based, multi-objective actor-critic
+policy that combines a heterogeneous spatial-graph encoder with a Tchebycheff-scalarized
+reward over demand, equity, and accessibility, condition the policy itself on the sampled
+objective-weight vector so one trained model spans the full efficiency-equity trade-off
+surface, and add a cross-city curriculum-transfer mechanism -- pretraining on one city's
+network and warm-starting another's -- that responds directly to the training-cost
+critique of GNN-based methods without abandoning the GNN.
 
 The paper's contribution is threefold: (1) the first MNEP method to combine GNN spatial
 representation with multi-objective fairness decomposition in a single policy; (2) a
@@ -100,6 +102,13 @@ The manuscript is original, has not been published previously, and is not under
 consideration for publication elsewhere. I am the sole author and approve its
 submission. I declare no competing financial or personal interests, and the work
 received no specific grant from any funding agency.
+
+The main text runs to approximately 14,200 words (Introduction through Conclusion,
+excluding tables, figures, and references), above the journal's typical 10,000-word
+guideline; this reflects two fully reported case-study cities together with the
+reproducibility and construct-validity findings described above. I would welcome the
+editor's guidance on any length reduction expected before the manuscript proceeds to
+review.
 
 Thank you for your consideration.
 
