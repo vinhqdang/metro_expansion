@@ -251,3 +251,6 @@ data/*/raw/
 *.osm.pbf
 *.graphml
 !data/README.md
+
+# Generated city variants (symlinks into external/); rebuilt by scripts/make_city_variants.py
+data/cities/
