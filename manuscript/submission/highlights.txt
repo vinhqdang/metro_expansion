@@ -1,0 +1,4 @@
+Matched-budget comparison of graph RL and NSGA-II for metro line extension
+Corrected demand, zero-safe fairness and accessibility scoring for the benchmark
+Leave-one-line-out test: recovering Xi'an Line 2 against random lines
+Paired cross-city warm-start study with a random-encoder control
