@@ -19,5 +19,5 @@ route for any of its actual comparisons:
 
 This directory's three empty subdirectories are accordingly a stale, unused scaffold
 from an earlier planning pass, not work in progress; see
-`docs/superpowers/specs/2026-08-18-metro-expansion-manuscript-design.md` §5 for the
+`docs/design/2026-08-18-metro-expansion-manuscript-design.md` §5 for the
 original design rationale if reviving them is ever useful.
