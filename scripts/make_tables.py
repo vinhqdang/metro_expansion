@@ -354,6 +354,7 @@ def main_macros(cv: str, summ: dict[str, Any], mac: Macros) -> None:
             mac.add_stat(mt + tk, s["metrics"][key], d)
         mac.add(mt + "Npoints", str(s["n_points"]))
         mac.add(mt + "NA", str(s["n_na"]))
+        mac.add(mt + "Lines", f'{s["distinct_lines_mean"]:.1f}')
         for ws in summ["weight_settings"]:
             name = ws["name"]
             for k, ot in OBJ_TOK.items():

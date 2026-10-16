@@ -1,0 +1,11 @@
+\subsection{Limitations}\label{sec:limitations}
+The study has the following limits.
+\begin{itemize}
+\item \emph{Problem scope.} The model extends a network by one line on a grid. It has no construction cost, no line capacity or frequency, no transfer penalty, no passenger assignment and no phasing. The lines it produces are abstract alignments, not implementable plans.
+\item \emph{Data.} Each instance has a single OD snapshot. For Xi'an that snapshot was recorded while both existing lines operated, so demand near them reflects their presence. The grids carry no population or coordinates, so the radiation-model accessibility of \citet{simini2012} could not be computed. Our accessibility term measures trip-end mass within reach, not travel time or access to jobs.
+\item \emph{Population groups.} Groups are price bands from the benchmark. Housing prices partly reflect existing transit access, so equity measured over them can be circular, and a price band is not a measure of need. We report the worst-served group and the generalised Gini welfare, but we have no income, car-ownership or age data to build a need-based grouping.
+\item \emph{Coverage of cities.} Two benchmark grids of 841 and 1\,645 cells were tested. We do not know how the comparison changes on networks an order of magnitude larger, such as Chengdu, because no OD data for such a city were available to us.
+\item \emph{Budgets and tuning.} The comparison fixes about $10^4$ simulated lines. A different budget could change the ranking. Hyperparameters were selected on three separate seeds, with six configurations per method class; a larger search could help any method.
+\item \emph{Baselines.} The genetic algorithm and tabular agent of \citet{michailidis2026} were designed for a single reward and return one line, so their results on the Pareto metrics partly reflect that design. The ablations of our own policy are not reimplementations of MetroGNN or of \citet{zhang2024}.
+\item \emph{Statistics.} With ten seeds the smallest exact two-sided Wilcoxon $p$-value is 0.002, so after Holm correction only effects that appear in almost every seed can be called significant.
+\end{itemize}
