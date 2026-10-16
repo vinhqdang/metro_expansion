@@ -1,0 +1,1 @@
+python3.13 scripts/compute_normalization.py --city xian --variant full --groups price_groups_5.txt --seeds 100 101 102 --nr_stations 47 --chained 1 --out results/xian_full47/normalization.json
