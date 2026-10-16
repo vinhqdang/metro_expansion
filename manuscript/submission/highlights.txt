@@ -1,4 +1,5 @@
-Matched-budget comparison of graph RL and NSGA-II for metro line extension
+NSGA-II beats a graph RL policy on trade-off sets at equal simulation budget
 Corrected demand, zero-safe fairness and accessibility scoring for the benchmark
-Leave-one-line-out test: recovering Xi'an Line 2 against random lines
+Leave-one-line-out test: recovering Xi'an Line 2 against random search
+The RL policy returns nearly the same line for different objective weights
 Paired cross-city warm-start study with a random-encoder control
