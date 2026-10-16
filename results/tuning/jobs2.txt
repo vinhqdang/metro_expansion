@@ -1,0 +1,11 @@
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --entropy0 0.05 --out results/tuning/xian_rl_c3_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --entropy0 0.05 --out results/tuning/xian_rl_c3_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --entropy0 0.1 --out results/tuning/xian_rl_c6_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --entropy0 0.1 --out results/tuning/xian_rl_c6_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --entropy0 0.1 --out results/tuning/xian_rl_c6_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --entropy0 0.2 --out results/tuning/xian_rl_c7_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --entropy0 0.2 --out results/tuning/xian_rl_c7_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --entropy0 0.2 --out results/tuning/xian_rl_c7_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --out results/tuning/xian_rl_c0_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --batch_w 8 --batch_k 2 --out results/tuning/xian_rl_c4_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --batch_w 8 --batch_k 2 --out results/tuning/xian_rl_c4_seed102.json
