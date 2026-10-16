@@ -294,7 +294,7 @@ def test_generated_tex_compiles(tree, summary, tmp_path):
     for f in out.iterdir():
         shutil.copy(f, build / f.name)
     doc = (
-        "\\documentclass{article}\n\\usepackage{booktabs}\n\\usepackage{amsmath}\n"
+        "\\documentclass{article}\n\\usepackage{booktabs}\n\\usepackage{graphicx}\n\\usepackage{amsmath}\n"
         "\\begin{document}\n\\input{numbers.tex}\n"
         "\\input{tab_main_xian_full.tex}\n\\input{tab_objectives_xian_full.tex}\n"
         "\\input{tab_tests_xian_full.tex}\n\\input{tab_transfer_xian_to_amsterdam.tex}\n"
