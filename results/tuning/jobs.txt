@@ -1,0 +1,18 @@
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --out results/tuning/xian_rl_c0_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --lr_start 3e-3 --lr_end 3e-4 --out results/tuning/xian_rl_c1_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --lr_start 3e-4 --lr_end 3e-5 --out results/tuning/xian_rl_c2_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --entropy0 0.05 --out results/tuning/xian_rl_c3_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --batch_w 8 --batch_k 2 --out results/tuning/xian_rl_c4_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 100 --norm results/xian_full/normalization.json --quiet --lr_start 3e-3 --lr_end 3e-4 --entropy0 0.05 --out results/tuning/xian_rl_c5_seed100.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --out results/tuning/xian_rl_c0_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --lr_start 3e-3 --lr_end 3e-4 --out results/tuning/xian_rl_c1_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --lr_start 3e-4 --lr_end 3e-5 --out results/tuning/xian_rl_c2_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --entropy0 0.05 --out results/tuning/xian_rl_c3_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --batch_w 8 --batch_k 2 --out results/tuning/xian_rl_c4_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 101 --norm results/xian_full/normalization.json --quiet --lr_start 3e-3 --lr_end 3e-4 --entropy0 0.05 --out results/tuning/xian_rl_c5_seed101.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --out results/tuning/xian_rl_c0_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --lr_start 3e-3 --lr_end 3e-4 --out results/tuning/xian_rl_c1_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --lr_start 3e-4 --lr_end 3e-5 --out results/tuning/xian_rl_c2_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --entropy0 0.05 --out results/tuning/xian_rl_c3_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --batch_w 8 --batch_k 2 --out results/tuning/xian_rl_c4_seed102.json
+python3.13 scripts/run_rl.py --city xian --variant full --episodes 10000 --seed 102 --norm results/xian_full/normalization.json --quiet --lr_start 3e-3 --lr_end 3e-4 --entropy0 0.05 --out results/tuning/xian_rl_c5_seed102.json

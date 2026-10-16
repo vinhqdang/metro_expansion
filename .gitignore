@@ -254,3 +254,6 @@ data/*/raw/
 
 # Generated city variants (symlinks into external/); rebuilt by scripts/make_city_variants.py
 data/cities/
+
+# Raw run logs
+results/logs/
