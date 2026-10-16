@@ -55,6 +55,17 @@ The ranking is the same as on Xi'an, with larger gaps. The archive hypervolume o
 
 \paragraph{Cost.} One RL run takes about \XianRLWall\,s on Xi'an and \AmsterdamRLWall\,s on Amsterdam, against \XianNSGAWall\,s and \AmsterdamNSGAWall\,s for NSGA-II on one core. The RL runs also compute encoder passes and lookahead features, which the evolutionary methods do not.
 
+\subsection{Ablations of the policy}\label{sec:res-ablation}
+We remove one component at a time and run five seeds (0--4) of each variant on Xi'an. Table~\ref{tab:ablation} compares each variant with the full method on the same seeds. With five seeds per group the smallest exact two-sided Mann--Whitney $p$-value is 0.008, or 0.024 after Holm correction over three contrasts.
+
+\input{generated/tab_ablation.tex}
+
+\paragraph{Message passing.} Replacing the graph encoder by a linear projection lowers the expected utility from \AblFullEum\ to \AblNoMessagePassingEum\ (difference \AblNoMessagePassingEumDiff, Holm-adjusted $p=\AblNoMessagePassingEumPHolm$) and the archive hypervolume from \AblFullHv\ to \AblNoMessagePassingHv\ ($p=\AblNoMessagePassingHvPHolm$). This is the clearest effect among the ablations. The variant produces more distinct deployable lines (\AblNoMessagePassingLines) than the full method (\AblFullLines), so variety alone does not give quality.
+
+\paragraph{Scalarised prior.} Without the fixed prior, the 15 deployable points collapse to one line (\AblNoPriorLines\ distinct lines on average) and the expected utility falls to \AblNoPriorEum\ ($p=\AblNoPriorEumPHolm$). The archive hypervolume is not clearly different ($p=\AblNoPriorHvPHolm$). The prior accounts for the weight sensitivity the policy has.
+
+\paragraph{Weights.} Training with a fixed demand-only weight lowers the expected utility to \AblDemandOnlyEum\ ($p=\AblDemandOnlyEumPHolm$), as expected for a method judged on three objectives. Its archive hypervolume is lower by \AblDemandOnlyHvDiff\ but the difference is not detectable with five seeds ($p=\AblDemandOnlyHvPHolm$).
+
 \subsection{Cross-city warm start}\label{sec:res-transfer}
 We trained the policy on one city and used it to initialise training on the other, in both directions. The source policy of seed $s$ initialises the target run of seed $s$. The target run has 2\,000 episodes, one fifth of the full budget. Six conditions are compared: scratch, all transferable parameters (\emph{full}), the encoder only, the move and start heads only, all parameters with a frozen encoder, and a random frozen encoder. The input projection is transferred as well, since both cities use the same feature layout. Five seeds per cell is a small sample. With five pairs the smallest exact two-sided Wilcoxon $p$-value is 0.0625, so no contrast can reach $p<0.05$ in this study, with or without Holm correction. We report effect sizes and the number of seeds in which the warm start is better.
 
