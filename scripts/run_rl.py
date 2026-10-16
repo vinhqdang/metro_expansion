@@ -64,6 +64,8 @@ def main(argv: list[str] | None = None) -> dict:
     p.add_argument("--lr_end", type=float, default=1e-4)
     p.add_argument("--entropy0", type=float, default=0.01)
     p.add_argument("--entropy_frac", type=float, default=0.7)
+    p.add_argument("--prior_lam", type=float, default=1.0, help="fixed w-scalarised move prior (0 = legacy)")
+    p.add_argument("--prior_lam_s", type=float, default=1.0, help="fixed w-scalarised start prior (0 = legacy)")
     p.add_argument("--quiet", action="store_true")
     args = p.parse_args(argv)
 
@@ -76,6 +78,7 @@ def main(argv: list[str] | None = None) -> dict:
         eval_every=args.eval_every, best_of=args.best_of, od_topk=args.od_topk, transfer=args.transfer,
         init_from=args.init_from, save_ckpt=args.save_ckpt, verbose=not args.quiet,
         lr_start=args.lr_start, lr_end=args.lr_end, entropy0=args.entropy0, entropy_frac=args.entropy_frac,
+        prior_lam=args.prior_lam, prior_lam_s=args.prior_lam_s,
     )
 
     t0 = time.time()
@@ -129,6 +132,8 @@ def main(argv: list[str] | None = None) -> dict:
           f"budget_rollouts={out['budget_rollouts']} eval_rollouts={out['eval_rollouts']}")
     print(f"policy: hv={ind['policy']['hv']:.6f} eum={ind['policy']['eum']:.5f}  "
           f"best_of_32: hv={ind['policy_best_of_32']['hv']:.6f} eum={ind['policy_best_of_32']['eum']:.5f}")
+    if "policy_top8_starts" in ind:
+        print(f"top8_starts: hv={ind['policy_top8_starts']['hv']:.6f} eum={ind['policy_top8_starts']['eum']:.5f}")
     return record
 
 

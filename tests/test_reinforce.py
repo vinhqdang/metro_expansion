@@ -66,7 +66,7 @@ def test_smoke_run_writes_schema_and_is_deterministic(tmp_path):
     assert out_a["curve"] == out_b["curve"]
     assert out_a["archive_nd"] == out_b["archive_nd"]
     assert out_a["budget_rollouts"] == 32
-    assert len(out_a["policy_front"]) == 30  # 15 greedy + 15 best-of-k
+    assert len(out_a["policy_front"]) == 45  # 15 greedy + 15 best-of-k + 15 greedy-from-top-8-starts
 
 
 def test_cli_json_has_schema_fields(tmp_path):

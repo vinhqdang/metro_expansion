@@ -27,7 +27,7 @@ from torch import nn
 from src.envs.context import build_context
 from src.envs.fast_motndp import build_city, make_env
 from src.eval.normalization import Norm
-from src.eval.objectives import compute_objectives
+from src.eval.objectives import compute_objectives, ggi
 from src.eval.record import front_indicators, make_point
 from src.eval.weights import lattice
 from src.gnn.encoder import FlatEncoder, HeteroGNNEncoder
@@ -74,6 +74,8 @@ class RunConfig:
     init_from: str | None = None
     save_ckpt: str | None = None
     calib_episodes: int = 200
+    prior_lam: float = 1.0  # weight of the fixed w-scalarised move prior (0 = legacy v2 head)
+    prior_lam_s: float = 1.0  # weight of the fixed w-scalarised start prior (0 = legacy StartHead)
     verbose: bool = True
 
 
@@ -158,6 +160,41 @@ def _node_index(cells_xy: np.ndarray, gy: int) -> np.ndarray:
     return cells_xy[:, 0] * gy + cells_xy[:, 1]
 
 
+def _standardise(x: np.ndarray, valid: np.ndarray) -> np.ndarray:
+    out = np.zeros_like(x, dtype=float)
+    v = x[valid]
+    if v.size > 1 and v.std() > 1e-9:
+        out[valid] = (v - v.mean()) / v.std()
+    return out
+
+
+def move_prior(feats: np.ndarray, s_cum: np.ndarray, valid: np.ndarray, m: int, f_ref1: float) -> np.ndarray:
+    """[8, 3] standardised one-step gains: D (log total OD gain), GGI increment, A (newly reached mass)."""
+    pct = feats[:, 1:1 + m] * f_ref1
+    g0 = ggi(s_cum)
+    dg = np.array([ggi(s_cum + pct[k]) - g0 if valid[k] else 0.0 for k in range(len(valid))])
+    return np.stack([_standardise(feats[:, 0], valid), _standardise(dg, valid),
+                     _standardise(feats[:, 1 + m], valid)], axis=1)
+
+
+def start_prior(city, fctx) -> np.ndarray:
+    """[N, 3] standardised static potentials: log OD degree, GGI of per-group OD degree, uncovered mass within K."""
+    od = np.asarray(city.od_mx, dtype=float)
+    deg = np.log1p(od.sum(0) + od.sum(1))
+    god = np.asarray(city.group_od_mx, dtype=float)
+    gs = god.sum(axis=(1, 2))
+    gs[gs == 0] = 1.0
+    gdeg = (god.sum(2) + god.sum(1)) / gs[:, None]
+    bal = np.array([ggi(gdeg[:, i]) for i in range(gdeg.shape[1])])
+    M = fctx.mu * (~fctx.existing_reach)
+    K = fctx.K
+    Mp = np.pad(M, K)
+    X, Y = M.shape
+    acc = sum(Mp[K + dx:K + dx + X, K + dy:K + dy + Y] for dx in range(-K, K + 1) for dy in range(-K, K + 1))
+    P = np.stack([deg, bal, acc.reshape(-1)], axis=1)
+    return (P - P.mean(0)) / (P.std(0) + 1e-9)
+
+
 # ----------------------------------------------------------------------------- episode
 
 def run_episode(S: Setup, h: torch.Tensor, w: np.ndarray, mode: str, gen: torch.Generator | None,
@@ -172,7 +209,7 @@ def run_episode(S: Setup, h: torch.Tensor, w: np.ndarray, mode: str, gen: torch.
         logps: list[torch.Tensor] = []
         ents: list[torch.Tensor] = []
         if start is None and S.use_start_head:
-            s_logits, s_logp, s_ent = agent.start_head(h, w_emb)
+            s_logits, s_logp, s_ent = agent.start_head(h, w_emb, w_t)
             s_idx = _select(s_logits, mode, gen)
             logps.append(s_logp[s_idx])
             ents.append(s_ent)
@@ -195,13 +232,16 @@ def run_episode(S: Setup, h: torch.Tensor, w: np.ndarray, mode: str, gen: torch.
             cand_h = h[torch.as_tensor(cand_idx, dtype=torch.long)]
             pooled = h[torch.as_tensor(sel, dtype=torch.long)].mean(dim=0)
             feat_t = None
+            prior_t = None
             if S.use_features:
                 feats = candidate_features(menv, fctx, nb, cand_idx, valid, int(info["location_grid_index"]),
                                            cells, menv.stations_placed)
                 feat_t = torch.as_tensor(feats, dtype=torch.float32)
+                if S.cfg.prior_lam > 0.0:
+                    prior_t = torch.as_tensor(move_prior(feats, s_cum, valid, m, fctx.f_ref1), dtype=torch.float32)
             mask_t = torch.as_tensor(valid)
             sbar = torch.as_tensor(s_cum, dtype=torch.float32)
-            logits, logp_all, ent = agent.policy(cand_h, feat_t, pooled, w_emb, sbar, mask_t)
+            logits, logp_all, ent = agent.policy(cand_h, feat_t, pooled, w_emb, sbar, mask_t, prior_t, w_t)
             a = _select(logits, mode, gen)
             logps.append(logp_all[a])
             ents.append(ent)
@@ -233,8 +273,8 @@ def build_agent(cfg: RunConfig, in_dim: int, n_groups: int, use_features: bool, 
     else:
         encoder = HeteroGNNEncoder(in_dim=in_dim, hidden_dim=d, num_layers=cfg.num_layers)
     weight_embed = nn.Linear(3, d, bias=False)
-    policy = AttentivePolicyHeadV2(d, n_groups, 4 + n_groups, use_features=use_features)
-    start_head = StartHead(d)
+    policy = AttentivePolicyHeadV2(d, n_groups, 4 + n_groups, use_features=use_features, prior_lam=cfg.prior_lam)
+    start_head = StartHead(d, prior_lam=cfg.prior_lam_s)
     return Agent(encoder, weight_embed, policy, start_head)
 
 
@@ -312,6 +352,8 @@ def setup(cfg: RunConfig, eval_norm: Norm) -> Setup:
     torch.manual_seed(cfg.seed)
     agent = build_agent(cfg, in_dim, n_groups, use_features, flat)
     transfer_rec = apply_transfer(agent, cfg, n_groups, use_features, flat)
+    if cfg.prior_lam_s > 0.0:
+        agent.start_head.psi = torch.as_tensor(start_prior(city, fctx), dtype=torch.float32)
 
     S = Setup(cfg=cfg, city=city, ctx=ctx, env=env, menv=menv, graph=graph, fctx=fctx, agent=agent,
               eval_norm=eval_norm, train_norm=train_norm, use_features=use_features,
@@ -366,6 +408,29 @@ def evaluate_lattice(S: Setup, W: np.ndarray, h: torch.Tensor, mode: str = "gree
         points.append(pt)
         front.append(np.asarray(pt["f_norm"], dtype=float))
     return points, front, n_eps
+
+
+def topk_starts(S: Setup, W: np.ndarray, h: torch.Tensor, k: int = 8) -> tuple[list[dict], list[np.ndarray], int]:
+    """Deployable front with k greedy rollouts per w: greedy moves from each of the k most probable
+    start cells under StartHead(.|w); keep the line with the smallest g(.|w). Costs k rollouts per w."""
+    points, front = [], []
+    gy = S.city.grid_y_size
+    for w in W:
+        with torch.no_grad():
+            s_logits, _, _ = S.agent.start_head(h, S.agent.weight_embed(torch.as_tensor(w, dtype=torch.float32)),
+                                                torch.as_tensor(w, dtype=torch.float32))
+        top = torch.argsort(s_logits, descending=True)[:k].tolist()
+        best = None
+        for s_idx in top:
+            ep = run_episode(S, h, w, "greedy", None, start=_gridxy(int(s_idx), gy), grad=False)
+            g = S.eval_norm.g(S.eval_norm.normalize(compute_objectives(S.ctx, ep.cells, ep.segments, ep.s)), w)
+            if best is None or g < best[0]:
+                best = (g, ep)
+        ep = best[1]
+        pt = make_point(S.ctx, S.eval_norm, w, f"greedy_top{k}_starts", ep.cells, ep.segments, ep.s)
+        points.append(pt)
+        front.append(np.asarray(pt["f_norm"], dtype=float))
+    return points, front, k * len(W)
 
 
 def best_of_k(S: Setup, W: np.ndarray, h: torch.Tensor, k: int, gen: torch.Generator) -> tuple[list[dict], list[np.ndarray], int]:
@@ -486,11 +551,17 @@ def finalize(S: Setup, log=print) -> dict:
     gen = torch.Generator().manual_seed(cfg.seed + 7919)
     pts_b, front_b, n_b = best_of_k(S, W_lat, h, cfg.best_of, gen)
     S.eval_total += n_g + n_b
+    pts_t, front_t, n_t = ([], [np.zeros(3)], 0)
+    if S.use_start_head:
+        pts_t, front_t, n_t = topk_starts(S, W_lat, h, k=8)
+        S.eval_total += n_t
 
     ind = {
         "policy": front_indicators(np.stack(front_g), S.eval_norm, W_lat),
         "policy_best_of_32": front_indicators(np.stack(front_b), S.eval_norm, W_lat),
     }
+    if pts_t:
+        ind["policy_top8_starts"] = front_indicators(np.stack(front_t), S.eval_norm, W_lat)
     if S.arch_f.shape[0]:
         ind["archive"] = front_indicators(S.arch_f, S.eval_norm, W_lat)
     else:
@@ -506,7 +577,7 @@ def finalize(S: Setup, log=print) -> dict:
 
     nd = S.arch_f[front_nondom_mask(S.arch_f)] if S.arch_f.shape[0] else S.arch_f
     return {
-        "policy_front": pts_g + pts_b,
+        "policy_front": pts_g + pts_b + pts_t,
         "archive_nd": nd.tolist(),
         "archive_best": archive_best,
         "curve": S.curve,
@@ -533,6 +604,7 @@ def save_checkpoint(S: Setup, path: str) -> None:
         "city": S.cfg.city, "variant": S.cfg.variant, "seed": S.cfg.seed, "ablation": S.cfg.ablation,
         "hidden_dim": S.cfg.hidden_dim, "num_layers": S.cfg.num_layers, "n_groups": S.n_groups,
         "use_features": S.use_features, "flat": S.flat, "episodes": S.cfg.episodes,
+        "prior_lam": S.cfg.prior_lam, "prior_lam_s": S.cfg.prior_lam_s,
     }
     # every parameter of every module is stored, including encoder.input_proj
     payload = {
@@ -569,6 +641,7 @@ def run(cfg: RunConfig, eval_norm: Norm, log=print) -> dict:
         "hidden_dim": cfg.hidden_dim, "num_layers": cfg.num_layers, "eval_every": cfg.eval_every,
         "best_of": cfg.best_of, "od_topk": cfg.od_topk, "ablation": cfg.ablation,
         "use_features": S.use_features, "use_start_head": S.use_start_head,
+        "prior_lam": cfg.prior_lam, "prior_lam_s": cfg.prior_lam_s,
         "train_norm_f_ref": [float(x) for x in S.train_norm.f_ref],
         "f_ref_features": float(S.fctx.f_ref1),
         "optimizer": "adam", "deterministic": True, "threads": 1,
