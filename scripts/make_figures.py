@@ -101,5 +101,4 @@ def holdout_fig() -> None:
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     pareto_fig()
-    holdout_fig()
     print("wrote figures to", OUT)

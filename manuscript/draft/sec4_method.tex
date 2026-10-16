@@ -1,5 +1,13 @@
 \section{Methods}\label{sec:method}
 
+Figure~\ref{fig:algorithm} gives an overview of the learned method and of how every method is evaluated.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_algorithm.pdf}
+\caption{The learned method and its evaluation. Boxes 1 to 5 build a line, boxes 6 to 8 turn the line into a parameter update (Section~\ref{sec:training}). The evaluation panel applies to every method in the comparison, not only to the learned policy.}\label{fig:algorithm}
+\end{figure}
+
 \subsection{Graph policy}\label{sec:policy}
 \paragraph{Encoder} Each cell has a seven-dimensional input: a one-hot price group, an indicator for cells on an existing line, and the normalised log OD degree. Two edge types connect the cells: spatial edges between the eight grid neighbours, and OD edges weighted by flow. Two message-passing layers aggregate each relation separately, combine the results with a residual connection and a $\tanh$ non-linearity, and produce 32-dimensional embeddings $\mathbf h_i$. The cell features do not depend on the line being built, so the embeddings are computed once per update and shared by all episodes in a batch.
 

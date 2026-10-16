@@ -14,10 +14,16 @@ Table~\ref{tab:main_xian_full} compares all methods on the Xi'an instance with t
 \paragraph{Reading the baselines} The genetic algorithm and the tabular agent of \citet{michailidis2026} return one line optimised for a single reward, so they cannot cover a trade-off set and score below random search on expected utility. This follows from their design for a single objective. The greedy baseline, which picks the best one-step move at every station, is worse still. Greedy lines stall under the straight-line constraint, which shows that the one-step features given to the policy are not enough on their own.
 
 \subsection{Trade-offs and fairness}\label{sec:res-tradeoffs}
-\input{generated/tab_objectives_xian_full.tex}
-Figure~\ref{fig:pareto} shows the deployable lines and archives of one seed, and Table~\ref{tab:objectives_xian_full} gives the raw objectives at the three vertex weights and averaged over the 15 deployable lines. NSGA-II produces a real trade-off. Its demand-vertex lines serve \XianNSGAVertexDemandDtot\ of the total flow and reach \XianNSGAVertexDemandAnew\ of the trip-end mass, while its accessibility-vertex lines serve \XianNSGAVertexAccessDtot\ and reach \XianNSGAVertexAccessAnew. The three vertex solutions of the RL policy are almost the same line: demand \XianRLVertexDemandDtot, \XianRLVertexFairnessDtot\ and \XianRLVertexAccessDtot, and accessibility \XianRLVertexDemandAnew, \XianRLVertexFairnessAnew\ and \XianRLVertexAccessAnew. The policy is therefore not responding to the weight vector in the way a multi-objective policy should, although the scalarised prior makes it respond somewhat: its 15 deployable points contain \XianRLLines\ distinct lines on average, against \XianNSGALines\ for NSGA-II. The worst-served group receives between \XianRLVertexDemandSmin\ and \XianRLVertexFairnessSmin\ of its demand under the RL policy, against up to \XianNSGAVertexFairnessSmin\ for the fairness-vertex lines of NSGA-II. No run produced an undefined Gini index (\XianRLNA\ of \XianRLNpoints\ points for RL, \XianNSGANA\ of \XianNSGANpoints\ for NSGA-II).
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_vertex_lines.pdf}
+\caption{Lines built for the three vertex weights on Xi'an, seed 0, over the demand map (darker is more trip-end mass). Top: the RL policy. Bottom: NSGA-II. Black lines are the existing metro lines. The labels give the demand share $D$, the generalised Gini welfare $G$ and the accessibility $A$ of each line. The RL lines are nearly the same for the three weights, while NSGA-II builds different lines for different priorities.}\label{fig:vertex}
+\end{figure}
 
-\begin{figure}[t]
+\input{generated/tab_objectives_xian_full.tex}
+Figure~\ref{fig:pareto} shows the deployable lines and archives of one seed, Figure~\ref{fig:vertex} shows the lines themselves on the map, and Table~\ref{tab:objectives_xian_full} gives the raw objectives at the three vertex weights and averaged over the 15 deployable lines. NSGA-II produces a real trade-off. Its demand-vertex lines serve \XianNSGAVertexDemandDtot\ of the total flow and reach \XianNSGAVertexDemandAnew\ of the trip-end mass, while its accessibility-vertex lines serve \XianNSGAVertexAccessDtot\ and reach \XianNSGAVertexAccessAnew. The three vertex solutions of the RL policy are almost the same line: demand \XianRLVertexDemandDtot, \XianRLVertexFairnessDtot\ and \XianRLVertexAccessDtot, and accessibility \XianRLVertexDemandAnew, \XianRLVertexFairnessAnew\ and \XianRLVertexAccessAnew. The policy is therefore not responding to the weight vector in the way a multi-objective policy should, although the scalarised prior makes it respond somewhat: its 15 deployable points contain \XianRLLines\ distinct lines on average, against \XianNSGALines\ for NSGA-II. The worst-served group receives between \XianRLVertexDemandSmin\ and \XianRLVertexFairnessSmin\ of its demand under the RL policy, against up to \XianNSGAVertexFairnessSmin\ for the fairness-vertex lines of NSGA-II. No run produced an undefined Gini index (\XianRLNA\ of \XianRLNpoints\ points for RL, \XianNSGANA\ of \XianNSGANpoints\ for NSGA-II).
+
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_pareto_xian.pdf}
 \caption{Trade-offs on Xi'an, seed 0. Large markers are the 15 deployable lines of each method, small faint markers the non-dominated archive. Objectives are scaled by the single-objective anchors. Methods are distinguished by colour and marker shape. NSGA-II covers a wide range of demand, fairness and accessibility, while the RL deployable lines cluster in a small region.}\label{fig:pareto}
@@ -34,7 +40,7 @@ We remove Line~2 from the instance and ask each method for a 27-station extensio
 \resizebox{\textwidth}{!}{\input{generated/tab_holdout.tex}}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_holdout_map.pdf}
 \caption{Leave-one-line-out test on the Xi'an grid, seed 0. Black: Line~1, kept. Dashed grey: the real Line~2, removed from the instance. Coloured: the 27-station line each method generates at the balanced weight. The axes are grid rows and columns of about 1\,km; the figure is schematic and does not show geographic boundaries.}\label{fig:holdout}

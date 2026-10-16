@@ -3,9 +3,15 @@
 \subsection{Line extension on a grid}\label{sec:benchmark}
 A city is a grid of $N$ cells with a symmetric OD matrix $\mathbf{O}\in\mathbb{R}_{\ge 0}^{N\times N}$ and one or more existing metro lines. A subset of cells is assigned to $m$ population groups. A line is built as a walk. The agent chooses a start cell and then makes $T-1$ moves to one of the eight neighbouring cells. A move is allowed if it stays inside the grid, does not revisit a cell, and keeps the line close to straight; the last rule is the \texttt{MetroConstraints} of the benchmark, inherited from \citet{michailidis2026}. An episode ends after $T$ stations or when no move is allowed. The result is a line $L=(c_1,\dots,c_k)$ with $k\le T$.
 
-We use the Xi'an and Amsterdam instances of the public benchmark. Xi'an has $29\times 29=841$ cells, two existing lines and 461\,108 non-zero OD pairs after the pairs already served by existing lines are removed. Amsterdam has $35\times 47=1645$ cells, five existing lines and about 2.15 million non-zero OD pairs. Both have five price-based population groups covering 356 (Xi'an) and 772 (Amsterdam) cells.
+We use the Xi'an and Amsterdam instances of the public benchmark. Xi'an has $29\times 29=841$ cells, two existing lines and 461\,108 non-zero OD pairs after the pairs already served by existing lines are removed. Amsterdam has $35\times 47=1645$ cells, five existing lines and about 2.15 million non-zero OD pairs. Both have five price-based population groups covering 356 (Xi'an) and 772 (Amsterdam) cells. Figure~\ref{fig:instances} shows both instances.
 
 The environment can credit a new segment in two ways. With the default setting only the OD flow between the two cells joined by the segment is credited. With the chained setting, which the benchmark's own experiment scripts use, a new cell is also credited for its OD flow to every earlier cell of the line and to stations of existing lines it connects to. We use the chained setting throughout because it measures what a passenger can actually reach on the new line.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_instances.pdf}
+\caption{The two benchmark instances. Left: trip-end demand per cell (log scale) with the existing metro lines. Right: the five price-based population groups used for fairness; grey cells belong to no group. Each cell is about 1\,km $\times$ 1\,km. The grids are schematic and carry no geographic coordinates.}\label{fig:instances}
+\end{figure}
 
 \subsection{Objectives}\label{sec:objectives}
 Let $S(L)$ be the set of ordered cell pairs served by line $L$ under the chained rule, and let $\mathbf{s}=(s_1,\dots,s_m)$ be the share of each group's OD flow that is served, $s_g=\sum_{(i,j)\in S(L)}O^{g}_{ij}/\sum_{ij}O^{g}_{ij}$, where $O^{g}$ keeps the pairs with at least one end in group $g$. We score a line on three objectives, all to be maximised.
