@@ -99,7 +99,7 @@ def main(argv: list[str] | None = None) -> dict:
         "groups": args.groups,
         "chained": bool(args.chained),
         "nr_stations": args.nr_stations,
-        "method": f"rl_{args.ablation}",
+        "method": ("rl_noprior" if (args.ablation == "full" and args.prior_lam == 0 and args.prior_lam_s == 0) else f"rl_{args.ablation}"),
         "transfer": transfer,
         "seed": args.seed,
         "budget_rollouts": out["budget_rollouts"],

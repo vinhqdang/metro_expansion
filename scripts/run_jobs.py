@@ -1,7 +1,7 @@
 """Run a file of shell commands in parallel, skipping jobs whose --out file already holds a finished record.
 
 Usage: python3.13 scripts/run_jobs.py jobs.txt --parallel 4
-Each line is one command containing `--out PATH`; the job is skipped if PATH exists and contains "schema".
+Each line is one command containing `--out PATH`; the job is skipped if PATH holds a finished run record or a normalisation file.
 """
 
 from __future__ import annotations
@@ -24,7 +24,10 @@ def finished(cmd: str) -> bool:
     if not m:
         return False
     p = Path(m.group(1))
-    return p.exists() and "schema" in p.read_text(errors="ignore")[:2000]
+    if not p.exists():
+        return False
+    text = p.read_text(errors="ignore")
+    return "mnep.run.v1" in text or ('"f_ref"' in text and '"provenance"' in text)
 
 
 def run(cmd: str, log_dir: Path) -> tuple[str, int, float]:
