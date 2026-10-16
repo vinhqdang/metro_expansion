@@ -60,6 +60,10 @@ def main(argv: list[str] | None = None) -> dict:
     p.add_argument("--eval_every", type=int, default=50)
     p.add_argument("--best_of", type=int, default=32)
     p.add_argument("--od_topk", type=int, default=None)
+    p.add_argument("--lr_start", type=float, default=1e-3)
+    p.add_argument("--lr_end", type=float, default=1e-4)
+    p.add_argument("--entropy0", type=float, default=0.01)
+    p.add_argument("--entropy_frac", type=float, default=0.7)
     p.add_argument("--quiet", action="store_true")
     args = p.parse_args(argv)
 
@@ -71,6 +75,7 @@ def main(argv: list[str] | None = None) -> dict:
         seed=args.seed, ablation=args.ablation, hidden_dim=args.hidden_dim, num_layers=args.num_layers,
         eval_every=args.eval_every, best_of=args.best_of, od_topk=args.od_topk, transfer=args.transfer,
         init_from=args.init_from, save_ckpt=args.save_ckpt, verbose=not args.quiet,
+        lr_start=args.lr_start, lr_end=args.lr_end, entropy0=args.entropy0, entropy_frac=args.entropy_frac,
     )
 
     t0 = time.time()
