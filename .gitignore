@@ -260,3 +260,4 @@ results/logs/
 results/ckpt/
 manuscript/main_new.pdf
 results/ckpt/
+manuscript/*.spl
