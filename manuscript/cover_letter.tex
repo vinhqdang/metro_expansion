@@ -1,11 +1,3 @@
-% Cover letter for submission to Transportmetrica B: Transport Dynamics
-% (Taylor & Francis). This letter identifies the author, as intended -- it
-% goes to the editor only. Transportmetrica B runs single-anonymized peer
-% review (the reviewer is anonymous to the author; the author's identity is
-% visible to the reviewer, via ScholarOne), so -- unlike the previous
-% (Elsevier, double-blind) submission -- main.tex is not anonymized and there
-% is no separate title-page file; author name and affiliation appear directly
-% in the manuscript.
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{parskip}
@@ -25,97 +17,21 @@ Hung Yen, Vietnam\\
 \vspace{1em}
 \noindent
 To the Editors,\\
-\emph{Transportmetrica B: Transport Dynamics}
-
-\vspace{1em}
-
-Dear Editors,
-
-I am submitting the manuscript ``Fair and Transferable Graph Reinforcement Learning for
-Metro Network Expansion in Asian Cities'' for consideration as a
-regular research article in \emph{Transportmetrica B: Transport Dynamics}. This is a
-single-anonymized submission per the journal's policy; I understand the manuscript will
-be assessed for suitability by the editor and then reviewed by one independent, anonymous
-expert.
-
-The paper addresses the Metro Network Expansion Problem (MNEP), the rail-specific case of
-the Transport Network Design Problem (TNDP): given an existing rail network and a limited
-construction budget, decide which stations or line segments to add next. Classical TNDP
-solution methods -- mixed-integer and bilevel programming, genetic algorithms, tabu
-search, ant colony optimization -- buy tractability by fixing candidate corridors or line
-counts by hand before optimization begins. Reformulating MNEP as a sequential decision
-process solvable by reinforcement learning removes that pre-constraint; this journal has
-itself recently published closely related work applying deep RL directly to transit
-network design and improvement (Holliday, El-Geneidy, and Dudek, 2025), which we take as
-a strong signal of fit for a methods contribution of this kind, and three further recent
-papers have each taken a piece of that reformulation and shown it works: a GNN-based
-spatial state representation (MetroGNN), a fairness-aware multi-objective reward
-decomposed via Tchebycheff scalarization, and a tabular reinforcement-learning method that
-argues deep RL's overhead is unnecessary at this problem's scale. No method combines the
-first two, and none has been tested from small, data-sparse emerging metro systems to the
-largest networks in the world. We propose a GNN-based, multi-objective actor-critic
-policy that combines a heterogeneous spatial-graph encoder with a Tchebycheff-scalarized
-reward over demand, equity, and accessibility, condition the policy itself on the sampled
-objective-weight vector so one trained model spans the full efficiency-equity trade-off
-surface, and add a cross-city curriculum-transfer mechanism -- pretraining on one city's
-network and warm-starting another's -- that responds directly to the training-cost
-critique of GNN-based methods without abandoning the GNN.
-
-The paper's contribution is threefold: (1) the first MNEP method to combine GNN spatial
-representation with multi-objective fairness decomposition in a single policy; (2) a
-cross-city curriculum and sample-efficiency design (prioritized replay, reward shaping)
-that directly answers the training-cost and carbon-footprint critique raised against
-GNN-based MNEP methods; and (3) a rail-only scope discipline -- using each city's
-existing bus network purely as an auxiliary input signal, never as an action -- that lets
-the method extend, for the first time in this literature, to small, data-sparse emerging
-metro systems (Hanoi, Ho Chi Minh City) that prior MNEP studies have not evaluated on.
-
-The empirical results are reported as found rather than smoothed toward the hoped-for
-conclusion. A five-seed sweep on Xi'an finds no reliable advantage for the full method
-over either architectural ablation on demand, equity, or coverage, and the tabular RL
-baseline still wins on raw demand under a matched training budget -- a negative result
-for model complexity that we report plainly rather than obscure. Tracing an earlier,
-more favorable-looking equity finding, we discovered GPU training non-determinism severe
-enough to invert which architecture a metric appears to favor, traced it to two distinct
-causes (non-deterministic scatter reduction in the GNN encoder and an unseeded
-environment reset), fixed both, and verified deterministic re-runs -- a reproducibility
-hazard we believe generalizes beyond our own implementation to other GNN-based methods
-built on the same default scatter-reduction operations, and one we think is of
-independent interest to this journal's readership regardless of this paper's own
-architectural comparisons. On Ho Chi Minh City's structurally distinct, irregular
-polygon graph, an encoder ablation collapses to near-zero demand where the full method
-does not, and warm-starting from Xi'an's trained policy shows genuine positive transfer
-at initialization and, under a reduced training budget, reaches non-trivial demand and
-consistently higher coverage than training from scratch -- direct evidence for the
-curriculum's sample-efficiency claim on the one city where we could test it. A separately
-implemented radiation-model accessibility measure does not share the coverage proxy's
-architectural sensitivity, a construct-validity finding we report rather than omit.
-
-All code -- the GNN encoder, multi-objective policy, training and evaluation scripts for
-both cities, and the full test suite -- is publicly available now, not embargoed until
-publication, at \url{https://github.com/vinhqdang/metro_expansion}. Data sources are
-public third-party releases (Michailidis et al.'s \texttt{mo-tndp}, the CityScope/MIT
-\texttt{CSL\_HCMC} repository, and \texttt{GZUPA/subway-traffic-data-set}), cited and
-documented in the manuscript's Data Availability statement.
-
-The manuscript is original, has not been published previously, and is not under
-consideration for publication elsewhere. I am the sole author and approve its
-submission. I declare no competing financial or personal interests, and the work
-received no specific grant from any funding agency.
-
-The main text runs to approximately 14,200 words (Introduction through Conclusion,
-excluding tables, figures, and references), above the journal's typical 10,000-word
-guideline; this reflects two fully reported case-study cities together with the
-reproducibility and construct-validity findings described above. I would welcome the
-editor's guidance on any length reduction expected before the manuscript proceeds to
-review.
-
-Thank you for your consideration.
+\emph{Journal of Rail Transport Planning \& Management}
 
 \vspace{1em}
 \noindent
-Yours sincerely,\\[1em]
-Quang-Vinh Dang\\
-British University Vietnam, Hung Yen, Vietnam
+I submit the manuscript ``Graph reinforcement learning versus NSGA-II for fairness-aware metro line extension at matched simulation budgets'' for consideration as a research article.
 
+The paper compares a weight-conditioned graph reinforcement learning policy with NSGA-II, scalarised genetic algorithms, tabular Q-learning, a greedy rule and random lines on the public Xi'an and Amsterdam metro expansion benchmarks. Each method evaluates about $10^4$ simulated lines, and results are averaged over ten seeds. The paper corrects three weaknesses of the benchmark's usual scoring: the summed group percentage used as a demand figure, a Gini-based fairness term that rewards lines that serve nobody, and a uniform coverage proxy for accessibility. It also reports a leave-one-line-out test on Xi'an and a paired cross-city warm-start study.
+
+The main result is negative for the learned policy. NSGA-II gives better deployable trade-off sets on both grids, and the learned policy returns nearly the same line for different weight vectors. I report this together with the analysis plan that fixed the endpoints before the evaluation runs. The work fits the journal's interest in network design and in quantitative and algorithmic methods for rail planning, and the findings should help planners choose between learned and evolutionary methods.
+
+The manuscript is not under consideration elsewhere. All code, run records and the scripts that generate every table are available at \url{https://github.com/vinhqdang/metro_expansion}.
+
+\vspace{1em}
+\noindent
+Sincerely,\\[2em]
+Quang-Vinh Dang\\
+British University Vietnam
 \end{document}
