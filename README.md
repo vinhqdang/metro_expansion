@@ -12,7 +12,7 @@ Code and manuscript for a matched-budget comparison of graph reinforcement learn
 - `results/` -- normalisation anchors, tuning runs and run records (`mnep.run.v1` JSON).
 - `docs/analysis_plan.md` -- endpoints, tuning protocol and claim rules, fixed before any evaluation run.
 - `docs/design/` -- early project design notes. `docs/baseline_reproduction.md`, `docs/data_sources.md` -- baseline reproduction notes and data provenance.
-- `manuscript/` -- LaTeX source of the paper and cover letter.
+- `manuscript/` -- LaTeX source of the paper (`main.tex`, Elsevier `elsarticle`), cover letter, highlights (`submission/highlights.txt`) and generated tables and numbers (`generated/`). Build: `pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex`. Regenerate the tables with `scripts/aggregate.py`, `scripts/make_tables.py`, `scripts/holdout_macros.py`, `scripts/transfer_macros.py` and `scripts/ablation_macros.py`.
 - `legacy` scripts (`scripts/train_xian.py`, `scripts/train_hcmc.py`, ...) -- the original single-episode REINFORCE trainers, kept for reproducibility of the earlier configuration.
 
 ## Environment

@@ -45,6 +45,7 @@ SHORT = {
     "greedy": "Greedy",
     "random": "Random",
 }
+ABLATION_ONLY = {"rl_noprior", "rl_single_objective", "rl_flat_encoder"}  # shown in their own table
 CITY_NAMES = {"xian": "Xi'an", "amsterdam": "Amsterdam", "hcmc": "Ho Chi Minh City"}
 VARIANT_TEXT = {"full": "full network", "line1_only": "Line 1 only"}
 COND_LABELS = {
@@ -244,6 +245,8 @@ def table_main(cv: str, summ: dict[str, Any]) -> tuple[str, str]:
     cols = ["Method", "$n$", "Policy EUM", "Policy HV", "Archive HV", "IGD$^+$ (policy)", "Wall-clock (s)"]
     rows = []
     for m, s in summ["methods"].items():
+        if m in ABLATION_ONLY:
+            continue
         label = latex_escape(s["label"]) + ("$^\\dagger$" if s["single_point"] else "")
         cells = [label, str(s["n_seeds"])]
         for key in TABLE_METRICS:
@@ -271,6 +274,8 @@ def table_objectives(cv: str, summ: dict[str, Any]) -> str:
         name = ws["name"]
         blocks.append(f"\\multicolumn{{5}}{{l}}{{\\textit{{{SETTING_TEXT[name]}}}}} \\\\\n\\midrule")
         for m, s in summ["methods"].items():
+            if m in ABLATION_ONLY:
+                continue
             obj = s["objectives"][name]
             label = latex_escape(s["label"]) + ("$^\\dagger$" if s["single_point"] else "")
             if obj["available"]:

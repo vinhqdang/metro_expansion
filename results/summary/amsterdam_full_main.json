@@ -2153,7 +2153,7 @@
    "distinct_lines_mean": 7.0
   },
   "random": {
-   "label": "Random",
+   "label": "Random search",
    "n_seeds": 10,
    "seeds": [
     0,
@@ -2525,7 +2525,7 @@
      },
      {
       "method": "random",
-      "label": "Random",
+      "label": "Random search",
       "n_seeds": 10,
       "tested": true,
       "p": 0.00018267179110955002,
@@ -2644,7 +2644,7 @@
      },
      {
       "method": "random",
-      "label": "Random",
+      "label": "Random search",
       "n_seeds": 10,
       "tested": true,
       "p": 0.0010079762403767444,

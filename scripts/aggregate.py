@@ -48,6 +48,8 @@ BOOT_SEED = 0
 ALPHA = 0.05
 MIN_SEEDS_FOR_TEST = 3
 PRIMARY_REF = "rl_full"
+# Ablations use five seeds and are compared with the full method on matched seeds in their own table.
+ABLATION_METHODS = {"rl_noprior", "rl_single_objective", "rl_flat_encoder"}
 PRIMARY_FAMILIES = {"archive_hv": "Archive hypervolume", "policy_eum": "Policy EUM"}
 
 WEIGHT_SETTINGS: tuple[tuple[str, tuple[float, float, float] | None], ...] = (
@@ -87,7 +89,7 @@ METHOD_LABELS = {
     "tabular_eff": "Tabular Q-learning (demand)",
     "tabular_ggi2": "Tabular Q-learning (GGI)",
     "greedy": "Greedy",
-    "random": "Random",
+    "random": "Random search",
 }
 
 SEED_RE = re.compile(r"^seed(\d+)\.json$")
@@ -331,7 +333,7 @@ def tests_vs_reference(runs_by_method: dict[str, list[dict[str, Any]]], ref: str
                            "families": {}}
     if ref not in runs_by_method:
         return out
-    others = [m for m in ordered_methods(runs_by_method) if m != ref]
+    others = [m for m in ordered_methods(runs_by_method) if m != ref and m not in ABLATION_METHODS]
     for fam in PRIMARY_FAMILIES:
         x = _family_values(runs_by_method[ref], fam)
         rows: list[dict[str, Any]] = []

@@ -10,15 +10,15 @@ The environment can credit a new segment in two ways. With the default setting o
 \subsection{Objectives}\label{sec:objectives}
 Let $S(L)$ be the set of ordered cell pairs served by line $L$ under the chained rule, and let $\mathbf{s}=(s_1,\dots,s_m)$ be the share of each group's OD flow that is served, $s_g=\sum_{(i,j)\in S(L)}O^{g}_{ij}/\sum_{ij}O^{g}_{ij}$, where $O^{g}$ keeps the pairs with at least one end in group $g$. We score a line on three objectives, all to be maximised.
 
-\paragraph{Demand.} $D(L)=\sum_{(i,j)\in S(L)}O_{ij}\big/\sum_{ij}O_{ij}$, the true share of total OD flow served. This differs from the benchmark's percentage reward summed over groups. A pair with ends in two groups appears in both group matrices, so the summed figure exceeds $D$; on our two instances the group totals are 1.43 (Xi'an) and 1.46 (Amsterdam) times the total flow.
+\paragraph{Demand} $D(L)=\sum_{(i,j)\in S(L)}O_{ij}\big/\sum_{ij}O_{ij}$, the true share of total OD flow served. This differs from the benchmark's percentage reward summed over groups. A pair with ends in two groups appears in both group matrices, so the summed figure exceeds $D$; on our two instances the group totals are 1.43 (Xi'an) and 1.46 (Amsterdam) times the total flow.
 
-\paragraph{Fairness.} We use the generalised Gini welfare \citep{weymark1981}. Sort the group shares ascending, $s_{(1)}\le\dots\le s_{(m)}$, and define
+\paragraph{Fairness} We use the generalised Gini welfare \citep{weymark1981}. Sort the group shares ascending, $s_{(1)}\le\dots\le s_{(m)}$, and define
 \begin{equation}
 G(L)=\sum_{k=1}^{m}\omega_k\,s_{(k)},\qquad \omega_k=\frac{2^{-(k-1)}}{\sum_{l=1}^{m}2^{-(l-1)}} .\label{eq:ggi}
 \end{equation}
 The worst-served group has the largest weight. $G$ is monotone in every group's share and equals zero when nothing is served. We also report the worst-served share $s_{\min}=\min_g s_g$. A Gini index over the same shares is reported as a descriptive statistic only. It is undefined when all shares are zero, and we count those cases separately instead of assigning a value.
 
-\paragraph{Accessibility.} Let $\mu_i=\sum_j O_{ij}+\sum_j O_{ji}$ be the trip-end mass of cell $i$, let $E$ be the set of cells within Chebyshev distance $K=2$ of an existing line, and let $R(L)$ be the cells within distance $K$ of $L$. Then
+\paragraph{Accessibility} Let $\mu_i=\sum_j O_{ij}+\sum_j O_{ji}$ be the trip-end mass of cell $i$, let $E$ be the set of cells within Chebyshev distance $K=2$ of an existing line, and let $R(L)$ be the cells within distance $K$ of $L$. Then
 \begin{equation}
 A(L)=\frac{\sum_{i\in R(L)\setminus E}\mu_i}{\sum_{i\notin E}\mu_i},\label{eq:access}
 \end{equation}

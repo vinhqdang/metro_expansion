@@ -23,12 +23,12 @@ def main() -> None:
         summ = json.loads((ROOT / f"results/summary/transfer_{pair}.json").read_text())["budgets"]["reduced"]
         tests = {(t["condition"], t["outcome"]): t for t in summ["tests"]}
         base = np.array([_eum(pair, "scratch", s) for s in range(5)])
-        add(f"Tr{pt}ScratchEum", f"{base.mean():.3f}")
+        add(f"Tr{pt}ScratchEum", f"{base.mean():.3f}".replace("-", "$-$"))
         for c, ct in COND.items():
             if c == "scratch":
                 continue
             vals = np.array([_eum(pair, c, s) for s in range(5)])
-            add(f"Tr{pt}{ct}Eum", f"{vals.mean():.3f}")
+            add(f"Tr{pt}{ct}Eum", f"{vals.mean():.3f}".replace("-", "$-$"))
             add(f"Tr{pt}{ct}Diff", f"{(vals - base).mean():+.3f}".replace("-", "$-$"))
             add(f"Tr{pt}{ct}Wins", str(int((vals > base).sum())))
             t = tests[(c, "final_eum")]
