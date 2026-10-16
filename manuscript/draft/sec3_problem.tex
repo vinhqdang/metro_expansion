@@ -1,0 +1,32 @@
+\section{Problem and benchmark}\label{sec:problem}
+
+\subsection{Line extension on a grid}\label{sec:benchmark}
+A city is a grid of $N$ cells with a symmetric OD matrix $\mathbf{O}\in\mathbb{R}_{\ge 0}^{N\times N}$ and one or more existing metro lines. A subset of cells is assigned to $m$ population groups. A line is built as a walk. The agent chooses a start cell and then makes $T-1$ moves to one of the eight neighbouring cells. A move is allowed if it stays inside the grid, does not revisit a cell, and keeps the line close to straight; the last rule is the \texttt{MetroConstraints} of the benchmark, inherited from \citet{michailidis2026}. An episode ends after $T$ stations or when no move is allowed. The result is a line $L=(c_1,\dots,c_k)$ with $k\le T$.
+
+We use the Xi'an and Amsterdam instances of the public benchmark. Xi'an has $29\times 29=841$ cells, two existing lines and 461\,108 non-zero OD pairs after the pairs already served by existing lines are removed. Amsterdam has $35\times 47=1645$ cells, five existing lines and about 2.15 million non-zero OD pairs. Both have five price-based population groups covering 356 (Xi'an) and 772 (Amsterdam) cells.
+
+The environment can credit a new segment in two ways. With the default setting only the OD flow between the two cells joined by the segment is credited. With the chained setting, which the benchmark's own experiment scripts use, a new cell is also credited for its OD flow to every earlier cell of the line and to stations of existing lines it connects to. We use the chained setting throughout because it measures what a passenger can actually reach on the new line.
+
+\subsection{Objectives}\label{sec:objectives}
+Let $S(L)$ be the set of ordered cell pairs served by line $L$ under the chained rule, and let $\mathbf{s}=(s_1,\dots,s_m)$ be the share of each group's OD flow that is served, $s_g=\sum_{(i,j)\in S(L)}O^{g}_{ij}/\sum_{ij}O^{g}_{ij}$, where $O^{g}$ keeps the pairs with at least one end in group $g$. We score a line on three objectives, all to be maximised.
+
+\paragraph{Demand.} $D(L)=\sum_{(i,j)\in S(L)}O_{ij}\big/\sum_{ij}O_{ij}$, the true share of total OD flow served. This differs from the benchmark's percentage reward summed over groups. A pair with ends in two groups appears in both group matrices, so the summed figure exceeds $D$; on our two instances the group totals are 1.43 (Xi'an) and 1.46 (Amsterdam) times the total flow.
+
+\paragraph{Fairness.} We use the generalised Gini welfare \citep{weymark1981}. Sort the group shares ascending, $s_{(1)}\le\dots\le s_{(m)}$, and define
+\begin{equation}
+G(L)=\sum_{k=1}^{m}\omega_k\,s_{(k)},\qquad \omega_k=\frac{2^{-(k-1)}}{\sum_{l=1}^{m}2^{-(l-1)}} .\label{eq:ggi}
+\end{equation}
+The worst-served group has the largest weight. $G$ is monotone in every group's share and equals zero when nothing is served. We also report the worst-served share $s_{\min}=\min_g s_g$. A Gini index over the same shares is reported as a descriptive statistic only. It is undefined when all shares are zero, and we count those cases separately instead of assigning a value.
+
+\paragraph{Accessibility.} Let $\mu_i=\sum_j O_{ij}+\sum_j O_{ji}$ be the trip-end mass of cell $i$, let $E$ be the set of cells within Chebyshev distance $K=2$ of an existing line, and let $R(L)$ be the cells within distance $K$ of $L$. Then
+\begin{equation}
+A(L)=\frac{\sum_{i\in R(L)\setminus E}\mu_i}{\sum_{i\notin E}\mu_i},\label{eq:access}
+\end{equation}
+the share of trip-end mass that the line newly brings within reach. The Xi'an and Amsterdam grids carry no population or coordinates, so a radiation-model measure \citep{simini2012} cannot be computed there and Eq.~\eqref{eq:access} replaces the uniform cell coverage used in earlier work.
+
+\subsection{Scalarisation and scaling}\label{sec:scalar}
+The three raw objectives have very different ranges. $D$ is of order $10^{-2}$ for a 20-station line, while $A$ can reach about 0.4. Applied to raw values with an ideal point of 1, a Tchebycheff term would be dominated by whichever objective is furthest from 1, which is almost always demand. We therefore divide each objective by an anchor $f^{\mathrm{ref}}_j$, the best value found for that objective alone by a single-objective genetic algorithm with the same simulation budget (three tuning seeds, 10\,100 evaluated lines each), and clip the result to $[0,1.2]$. Write $\tilde f_j=\min\{f_j/f^{\mathrm{ref}}_j,\,1.2\}$ for the scaled objectives. For a weight vector $\mathbf{w}$ in the simplex we use the augmented Tchebycheff function
+\begin{equation}
+g(\tilde{\mathbf f}\mid\mathbf w)=\max_j w_j\,(z-\tilde f_j)+\rho\sum_j w_j\,(z-\tilde f_j),\qquad z=1.05,\ \rho=0.05 .\label{eq:tcheb}
+\end{equation}
+Smaller $g$ is better. A fixed set of 15 weight vectors, the simplex lattice with step $1/4$, defines the deployable solutions of every method.

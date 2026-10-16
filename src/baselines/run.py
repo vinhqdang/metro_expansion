@@ -6,6 +6,7 @@ import contextlib
 import io
 import os
 import subprocess
+import json
 import time
 from pathlib import Path
 from typing import Any
@@ -303,18 +304,24 @@ def compute_anchors(
     for j, key in enumerate(OBJECTIVE_KEYS):
         table[key] = {}
         for seed in seeds:
+            # Anchors are deterministic per (objective, seed, budget), so each is cached and reused after an interruption.
+            cache = Path(out).parent / "anchor_cache" / f"{key}_seed{int(seed)}_pop{pop}_gens{gens}_n{nr_stations}.json"
+            if cache.exists():
+                table[key][str(seed)] = float(json.loads(cache.read_text())["max"])
+                log(f"[anchor {key} seed {seed}] max={table[key][str(seed)]:.6g} (cached)")
+                continue
             env = ArchiveWrapper(base_env)
             p = evo.Problem(env, ctx, placeholder, nr_stations)
             rng = np.random.default_rng([int(seed), j])
             evo.ga_single_objective(p, rng, j, pop_size=pop, gens=gens)
             table[key][str(seed)] = float(p.best_raw[j])
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(json.dumps({"max": table[key][str(seed)], "evals": p.n_evals}))
             log(f"[anchor {key} seed {seed}] max={p.best_raw[j]:.6g} evals={p.n_evals}")
         f_ref[j] = max(table[key].values())
     norm = Norm(f_ref=f_ref, z=1.05, rho=0.05)
     save_norm(norm, out)
     # load_norm ignores extra keys, so provenance can be stored next to the anchors
-    import json
-
     payload = json.loads(Path(out).read_text())
     payload["provenance"] = {
         "city": city, "variant": variant, "groups": groups, "nr_stations": nr_stations,

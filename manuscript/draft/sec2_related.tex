@@ -1,0 +1,12 @@
+\section{Related work}\label{sec:related}
+
+\subsection{Rail and transit network design}
+Network design chooses where to place stations and lines under a budget. \citet{guihaire2008} classify 69 approaches to transit network design, frequency setting and timetabling, and \citet{farahani2013} review road, bus and rail variants. Mixed-integer programs, genetic algorithms, simulated annealing and tabu search dominate. Most keep the problem tractable by fixing the number of lines or by choosing candidate corridors in advance. Evolutionary multi-objective methods such as NSGA-II \citep{deb2002} are the usual choice when several criteria must be traded off, because a single run returns a set of non-dominated plans.
+
+\subsection{Reinforcement learning for metro expansion}
+\citet{bengio2021} describe the general pattern of learning a construction policy for combinatorial problems. For metro expansion, \citet{su2024} encode candidate regions as a heterogeneous graph with spatial and OD-flow edges and train an attentive actor-critic policy on a single demand objective. \citet{zhang2024} train a policy on three objectives (demand, equity and radiation-model accessibility \citep{simini2012}) and sample Tchebycheff weights \citep{zhangli2007} each episode so that one policy covers several trade-offs. \citet{michailidis2026} replace neural networks by a tabular Monte Carlo agent on a reformulated environment and report competitive results on Xi'an and Amsterdam. Their public environment is the benchmark used here. \citet{holliday2025} learn graph-based heuristics for transit network design and use them inside an evolutionary search, which is closer to hybrid than to pure RL.
+
+None of these studies compares a learned policy with an evolutionary multi-objective method at an equal number of simulated lines, and none reports the objectives separately for all methods.
+
+\subsection{Fairness and the evaluation of multi-objective methods}
+Gini-based equity terms are common in transit studies \citep{raza2023}. A Gini index is undefined when every group receives zero and is not monotone in the total service delivered. Welfare-based aggregators such as the generalised Gini index \citep{weymark1981} rank groups from worst to best and weight the worst-off most, which avoids both problems. For comparing sets of trade-off solutions, hypervolume and inverted generational distance are standard \citep{zitzler2003,ishibuchi2015}, and \citet{hayes2022} recommend expected utility for multi-objective RL. We use all three.
